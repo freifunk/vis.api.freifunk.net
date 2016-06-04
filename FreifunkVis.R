@@ -43,5 +43,6 @@ FFDF <- FF_readJSONs(FFF)
 FFDF <- FF_cleanDF(FFDF)
 
 # further data processing & visualisations in separate files.
+source(file = "FreifunkVis-timeseries.R")
 source(file = "FreifunkVis-wordclouds.R")
 
