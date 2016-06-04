@@ -7,10 +7,45 @@ library(stringr) # str_extract_all
 
 # prepare timelines
 FF_JSONs <- list.files(pattern = "[0-9]{8}-.*-ffSummarizedDir.json$")
+FF_days <- as.character(str_extract_all(FF_JSONs, pattern = "[0-9]{8}"))
 
-# combine all JSONs into single data frame
-FFDF <- rbind.fill(lapply(lapply(FF_JSONs, fromJSON), FF_readJSONs))
+if ("00000000-ffSummarizedDir.csv" %in% list.files(getwd())) {
+  
+  # use summary file if available, instead of reading files individually
+  try(known_FFDF <- read.csv2("00000000-ffSummarizedDir.csv", 
+                              encoding = "UTF-8"))
+  
+  # check for existing FFDF date & merge with new
+  if (length(unique(known_FFDF$mtime)) < length(FF_JSONs)) {
+  # naive, because single FF_JSON can include several different days
+  # tried (unique(gsub("-", "", as.character(known_FFDF$mtime))) %in% FF_days),
+  # but returns list of Booleans => unsuitable for if condition
+
+    # read in & generate data frame only from new JSONs
+    known_days <- gsub(pattern = "-",
+                       replacement = "",
+                       x = unique(known_FFDF$mtime))
+    new_days <- setdiff(FF_days, known_days)
+    new_FFDF <- rbind.fill(
+      lapply(
+        lapply(list.files(pattern = new_days), # [ ] get this to return list of all new file**names**, not just the 1st new file
+               fromJSON), 
+        FF_readJSONs))
+    
+    # combine known & new data frames
+    FFDF <- rbind.fill(known_FFDF, new_FFDF)  
+    # learned from http://stackoverflow.com/a/27313467
+  }
+} else {
+  # combine all JSONs into single data frame
+  FFDF <- rbind.fill(lapply(lapply(FF_JSONs, fromJSON), FF_readJSONs))
+  # same as inner else, just to catch edge case of repetive plotting without adding new JSONs
+}
+
 FFDF <- FF_cleanDF(FFDF)
+
+# export combined data frame
+write.csv2(x = FFDF, file = "00000000-ffSummarizedDir.csv", row.names = FALSE)
 
 # plot timeseries of average node number per community over time
 FFP_nodeNumber <- ggplot(data = subset(x = FFDF, 
