@@ -2,9 +2,9 @@
 # in response to https://media.ccc.de/v/gpn16-7659-die_freifunk_api
 # and https://wiki.freifunk.net/Ideas#Freifunk_API_visualisation_framework
 
-library(jsonlite)
-library(plyr)
-library(RCurl)
+library(jsonlite) # fromJSON
+library(plyr) # rbind.fill
+library(RCurl) # getURL
 
 # read in & clean JSON file (FF = Freifunk, 3rd F = file)
 FFF <- getURL("https://api.freifunk.net/data/ffSummarizedDir.json")
@@ -12,7 +12,7 @@ FFF <- gsub(pattern = "\r\n", # line-breaks
             replacement = " ", 
             x = FFF)
 
-# basic data frame cleaning
+# basic data frame (DF) cleaning
 FF_cleanDF <- function(DF) {
   
   # convert some variables to more useful formats
@@ -26,7 +26,7 @@ FF_cleanDF <- function(DF) {
   return(DF)
 }
 
-# convert to (FreiFunk) Data Frame; learned from https://stackoverflow.com/a/27432542
+# convert JSON to data frame; learned from https://stackoverflow.com/a/27432542
 FF_readJSONs = function(JSON) {
   return(rbind.fill( 
     lapply(
@@ -37,9 +37,11 @@ FF_readJSONs = function(JSON) {
     )))
 }
 
+# generate basic data frame for testing
 FFF <- fromJSON(FFF)
 FFDF <- FF_readJSONs(FFF)
 FFDF <- FF_cleanDF(FFDF)
 
+# further data processing & visualisations in separate files.
 source(file = "FreifunkVis-wordclouds.R")
 
