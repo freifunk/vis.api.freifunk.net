@@ -41,3 +41,5 @@ FFF <- fromJSON(FFF)
 FFDF <- FF_readJSONs(FFF)
 FFDF <- FF_cleanDF(FFDF)
 
+source(file = "FreifunkVis-wordclouds.R")
+
