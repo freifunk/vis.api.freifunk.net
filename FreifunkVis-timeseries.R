@@ -5,9 +5,9 @@ library(ggplot2)
 library(scales) # date_format
 library(stringr) # str_extract_all
 
-# prepare timelines
-FF_JSONs <- list.files(pattern = "[0-9]{8}-.*-ffSummarizedDir.json$")
-FF_days <- as.character(str_extract_all(FF_JSONs, pattern = "[0-9]{8}"))
+# use only files from days 6, 16 & 26 of each month
+FF_JSONs <- list.files(path = "./JSONs", pattern = "[0-9]{7}6-.*-ffSummarizedDir.json$")
+FF_days <- as.character(str_extract_all(FF_JSONs, pattern = "[0-9]{7}6"))
 
 if ("00000000-ffSummarizedDir.csv" %in% list.files(getwd())) {
   
@@ -28,8 +28,11 @@ if ("00000000-ffSummarizedDir.csv" %in% list.files(getwd())) {
     new_days <- setdiff(FF_days, known_days)
     new_FFDF <- rbind.fill(
       lapply(
-        lapply(list.files(pattern = new_days), # [ ] get this to return list of all new file**names**, not just the 1st new file
-               fromJSON), 
+        lapply(
+          # list all new filenames
+          list.files(pattern = paste(new_days, collapse="|")), 
+          # learned from http://stackoverflow.com/a/7664655/4341322
+          fromJSON), 
         FF_readJSONs))
     
     # combine known & new data frames
@@ -59,9 +62,10 @@ FFP_nodeNumber <- ggplot(data = subset(x = FFDF,
   scale_x_date(labels = date_format("%b '%y")) +
   expand_limits(y = 0) +  # learned from http://stackoverflow.com/a/13701732/4341322
   ggtitle("Nodes per Community (average) over Time") +
-  xlab(NULL) +  ylab(NULL) +
+  xlab(NULL) + ylab(NULL) +
   theme_minimal() +
-  theme(panel.grid.major = element_line(color = "#009ee0"),
+  theme(axis.text.x	= element_text(hjust = 0.8),
+        panel.grid.major = element_line(color = "#009ee0"),
         panel.grid.minor = element_blank())
 FFP_nodeNumber
 # colors from https://wiki.freifunk.net/Freifunk-Styles
