@@ -5,9 +5,11 @@ library(ggplot2)
 library(scales) # date_format
 library(stringr) # str_extract_all
 
-# use only files from days 6, 16 & 26 of each month
-FF_JSONs <- list.files(path = "./JSONs", pattern = "[0-9]{7}6-.*-ffSummarizedDir.json$")
-FF_days <- as.character(str_extract_all(FF_JSONs, pattern = "[0-9]{7}6"))
+# enter sub-dir & use random sample of available JSONs
+setwd(paste0(getwd(), "/JSONs"))
+FF_JSONs <- sample(x = list.files(pattern = "[0-9]{8}-.*-ffSummarizedDir.json$"), 
+                   size = 30)
+FF_days <- as.character(str_extract_all(FF_JSONs, pattern = "[0-9]{8}"))
 
 if ("00000000-ffSummarizedDir.csv" %in% list.files(getwd())) {
   
@@ -49,6 +51,7 @@ FFDF <- FF_cleanDF(FFDF)
 
 # export combined data frame
 write.csv2(x = FFDF, file = "00000000-ffSummarizedDir.csv", row.names = FALSE)
+setwd(sub("/JSONs", "", getwd()))
 
 # plot timeseries of average node number per community over time
 FFP_nodeNumber <- ggplot(data = subset(x = FFDF, 
