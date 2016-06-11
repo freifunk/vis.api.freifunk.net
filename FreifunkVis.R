@@ -79,3 +79,15 @@ FFP_current_protocols
 ggsave(filename = "FF_protocols.png", 
        plot = FFP_current_protocols)
 
+# sort protocols by popularity & remove rare for cleaner pie chart
+FF_current_protocols <- FF_current_protocols[order(FF_current_protocols$used),] 
+FF_current_common_protocols <- subset(FF_current_protocols, 
+                                      used > 1)
+
+# plot acceptable pie chart; learned from http://www.randalolson.com/2016/03/24/the-correct-way-to-use-pie-charts/
+png(file = "FF_protocols_pie.png", width = 960, height = 960, res = 300)
+print(pie(x = FF_current_common_protocols$used, 
+          labels = rownames(FF_current_common_protocols),
+          col = FF_wordPal,
+          clockwise = T))
+dev.off()

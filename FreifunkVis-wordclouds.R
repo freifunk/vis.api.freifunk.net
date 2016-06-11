@@ -5,10 +5,9 @@ library(RColorBrewer)
 library(tm)
 library(wordcloud)
 
-FF_prepareWordcloud = function(x) {
+FF_prepareWordcloud = function(x, remPunct = TRUE) {
   df = Corpus(VectorSource(x))
-  df = tm_map(df, removePunctuation)
-  df = tm_map(df, removeNumbers)
+  if (remPunct == TRUE) {df = tm_map(df, removePunctuation)}
   df = tm_map(df, removeWords, stopwords("de"))
   return(as.data.frame(as.matrix(DocumentTermMatrix(df))))
 }
