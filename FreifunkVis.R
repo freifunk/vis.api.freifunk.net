@@ -77,8 +77,8 @@ ffp.currentProtcols <- ggplot(
   mapping = aes(x     = protocol, 
                 y     = fraction, 
                 color = protocol)
-) + 
-  geom_point() + 
+  ) + 
+  geom_point(show.legend = FALSE) + 
   scale_y_continuous(labels = percent_format(), 
                      limits = c(0, # ensure dynamic resizin of y-axis, with...
                                 max(ffdf.currentProtcols$fraction)*1.1) # ... upper tick mark
