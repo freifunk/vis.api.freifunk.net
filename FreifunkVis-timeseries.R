@@ -24,18 +24,20 @@ if ("00000000-ffSummarizedDir.csv" %in% list.files(getwd())) {
   # but returns list of Booleans => unsuitable for if condition
 
     # read in & generate data frame only from new JSONs
-    known_days <- gsub(pattern = "-",
+    known_days <- gsub(pattern     = "-",
                        replacement = "",
-                       x = unique(known_FFDF$mtime))
+                       x           = unique(known_FFDF$mtime)
     new_days <- setdiff(FF_days, known_days)
     new_FFDF <- rbind.fill(
+    )
       lapply(
         lapply(
-          # list all new filenames
+          # list all new filenames; learned from http://stackoverflow.com/a/7664655/4341322
           list.files(pattern = paste(new_days, collapse="|")), 
-          # learned from http://stackoverflow.com/a/7664655/4341322
-          fromJSON), 
-        FF_readJSONs))
+          fromJSON
+          ), 
+        FF_readJSONs
+        ))
     
     # combine known & new data frames
     FFDF <- rbind.fill(known_FFDF, new_FFDF)  
@@ -57,7 +59,8 @@ setwd(sub("/JSONs", "", getwd()))
 FFP_nodeNumber <- ggplot(data = subset(x = FFDF, 
                                        select = c("name", 
                                                   "mtime", 
-                                                  "state.nodes")), 
+                                                  "state.nodes"
+                                       )), 
                          mapping = aes(x = mtime,
                                        y = state.nodes)) + 
   geom_point(stat = "summary", color = "#ffb400") +

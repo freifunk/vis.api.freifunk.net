@@ -9,9 +9,11 @@ library(RCurl) # getURL
 
 # read in & clean JSON file (FF = Freifunk, 3rd F = file)
 FFF <- getURL("https://api.freifunk.net/data/ffSummarizedDir.json")
-FFF <- gsub(pattern = "\r\n", # line-breaks
-            replacement = " ", 
-            x = FFF)
+FFF <- gsub(
+  pattern     = "\r\n",  # line-breaks
+  replacement = " ", 
+  x           = FFF
+)
 
 # basic data frame (DF) cleaning
 FF_cleanDF <- function(DF) {
@@ -29,13 +31,14 @@ FF_cleanDF <- function(DF) {
 
 # convert JSON to data frame; learned from https://stackoverflow.com/a/27432542
 FF_readJSONs = function(JSON) {
-  return(rbind.fill( 
-    lapply(
-      lapply(
+  return(
+    rbind.fill( 
         JSON, 
-        function(x) unlist(x)), 
-      function(x) do.call("data.frame", as.list(x))
-    )))
+      lapply(
+        lapply(
+          function(x) unlist(x)), 
+        function(x) do.call("data.frame", as.list(x))
+      )))
 }
 
 # generate basic data frame for testing
@@ -48,29 +51,36 @@ source(file = "FreifunkVis-timeseries.R")
 source(file = "FreifunkVis-wordclouds.R")
 
 # routing protocols
-FF_current_protocols <- as.data.frame(colSums(FF_prepareWordcloud(FFDF[, grepl("techDetails.routing", 
-                                                                               names(FFDF))], 
-                                                                  remPunct = FALSE)))
+FF_current_protocols <- as.data.frame(
+  colSums(
+    FF_prepareWordcloud(
+      FFDF[ , grepl("techDetails.routing", 
+                   names(FFDF))], 
+      remPunct = FALSE)
+    ))
 
 # expand to proper data frame, instead of named rows
 names(FF_current_protocols) <- "used"
 FF_current_protocols$protocol <- as.factor(rownames(FF_current_protocols))
 
 # learned from https://trinkerrstuff.wordpress.com/2013/08/14/how-do-i-re-arrange-ordering-a-plot-revisited/
-FF_current_protocols$protocol <- factor(FF_current_protocols$protocol, 
-                                         levels = FF_current_protocols$protocol[order(FF_current_protocols$used)])
+FF_current_protocols$protocol <- factor(
+  x      = FF_current_protocols$protocol, 
+  levels = FF_current_protocols$protocol[order(FF_current_protocols$used)])
 FF_current_protocols$fraction <- FF_current_protocols$used/sum(FF_current_protocols$used)
 
-FFP_current_protocols <- ggplot(data = FF_current_protocols, 
-                        mapping = aes(x = protocol, 
-                                      y = fraction, 
-                                      color = protocol)) + 
+FFP_current_protocols <- ggplot(
+  data = FF_current_protocols, 
+  mapping = aes(x     = protocol, 
+                y     = fraction, 
+                color = protocol)
+) + 
   geom_point() + 
   scale_y_continuous(labels = percent_format(), 
                      limits = c(0, # ensure dynamic resizin of y-axis, with...
                                 max(FF_current_protocols$fraction)*1.1) # ... upper tick mark
-                     ) +
   scale_color_manual(values = FF_wordPal) +
+  ) +
   labs(title = "Fractions of currently used routing protocols", 
        x = NULL, y = NULL, color = NULL) + 
   theme_classic()
@@ -81,13 +91,13 @@ ggsave(filename = "FF_protocols.png",
 
 # sort protocols by popularity & remove rare for cleaner pie chart
 FF_current_protocols <- FF_current_protocols[order(FF_current_protocols$used),] 
-FF_current_common_protocols <- subset(FF_current_protocols, 
-                                      used > 1)
+FF_current_common_protocols <- subset(FF_current_protocols, used > 1)
 
 # plot acceptable pie chart; learned from http://www.randalolson.com/2016/03/24/the-correct-way-to-use-pie-charts/
 png(file = "FF_protocols_pie.png", width = 960, height = 960, res = 300)
-print(pie(x = FF_current_common_protocols$used, 
-          labels = rownames(FF_current_common_protocols),
-          col = FF_wordPal,
-          clockwise = T))
+print(pie(x         = FF_current_common_protocols$used, 
+          labels    = rownames(FF_current_common_protocols),
+          col       = FF_wordPal,
+          clockwise = T
+))
 dev.off()
