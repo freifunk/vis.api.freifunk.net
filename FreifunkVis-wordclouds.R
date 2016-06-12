@@ -1,4 +1,5 @@
-# Visualising Freifunk API data by Katrin Leinweber, June 2016
+# Visualising Freifunk API data 
+# by Katrin Leinweber, June 2016
 # companion to FreifunkVis.R
 
 library(RColorBrewer)

@@ -1,4 +1,5 @@
-# Visualising Freifunk API data by Katrin Leinweber, June 2016
+# Visualising Freifunk API data 
+# by Katrin Leinweber, June 2016
 # in response to https://media.ccc.de/v/gpn16-7659-die_freifunk_api
 # and https://wiki.freifunk.net/Ideas#Freifunk_API_visualisation_framework
 
@@ -46,9 +47,11 @@ ffk.currentJSON <- fromJSON(ffk.currentJSON)
 ffdf <- ff.readJSONs(ffk.currentJSON)
 ffdf <- ff.cleanDF(ffdf)
 
+
 # further data processing & visualisations in separate files.
 source(file = "FreifunkVis-timeseries.R")
 source(file = "FreifunkVis-wordclouds.R")
+
 
 # routing protocols
 ffdf.currentProtcols <- as.data.frame(
@@ -89,6 +92,7 @@ ffp.currentProtcols
 ggsave(filename = "FF_protocols.png", 
        plot = ffp.currentProtcols)
 
+
 # sort protocols by popularity & remove rare for cleaner pie chart
 ffdf.currentProtcols <- ffdf.currentProtcols[order(ffdf.currentProtcols$used),] 
 ffdf.currentCommonProtocols <- subset(ffdf.currentProtcols, used > 1)
@@ -101,3 +105,4 @@ print(pie(x         = ffdf.currentCommonProtocols$used,
           clockwise = T
 ))
 dev.off()
+
