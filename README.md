@@ -19,3 +19,11 @@ Uses a 240th fraction of the [historical JSONs](https://api.freifunk.net/data/hi
 ![](FF_service_cloud.png)
 
 Presented terms appear at lest twice in the [current JSON](https://api.freifunk.net/data/ffSummarizedDir.json).
+
+## Currently used routing protocols
+
+![](FF_protocols.png)
+
+![](FF_protocols_pie.png)
+
+
