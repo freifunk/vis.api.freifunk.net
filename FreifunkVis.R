@@ -8,15 +8,16 @@ library(jsonlite) # fromJSON
 library(plyr) # rbind.fill
 library(RCurl) # getURL
 
-# read in & clean JSON file (FF = Freifunk, 3rd F = file)
-ffk.currentJSON <- getURL("https://api.freifunk.net/data/ffSummarizedDir.json")
-ffk.currentJSON <- gsub(
-  pattern     = "\r\n",  # line-breaks
-  replacement = " ", 
-  x           = ffk.currentJSON
-)
-
+# load functions
 source("ffFunctions.R")
+
+# read in JSON & remove line breaks
+# prevents "lexical error: invalid character inside string." in fromJSON
+ffk.currentJSON <- gsub(
+  x = getURL("https://api.freifunk.net/data/ffSummarizedDir.json"),
+  pattern = "\r\n",
+  replacement = " "
+)
 
 # generate basic data frame for testing
 ffk.currentJSON <- fromJSON(ffk.currentJSON)
