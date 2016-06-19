@@ -16,31 +16,7 @@ ffk.currentJSON <- gsub(
   x           = ffk.currentJSON
 )
 
-# basic data frame cleaning
-ff.cleanDF <- function(x) {
-  
-  # convert some variables to more useful formats
-  x$mtime <- as.Date(x$mtime, format = "%F %H:%M:%OS") # %F = %Y-%m-%d (ISO8601)
-  x$state.nodes <- as.numeric(x$state.nodes)
-  x$timeline.timestamp <- as.Date(x$timeline.timestamp, format = "%F")
-  
-  # very noisy time formats, using most common ("%F T%H:%M:%OS" => few more NA's)
-  x$state.lastchange <- as.Date(x$state.lastchange, format = "%F")
-  
-  return(x)
-}
-
-# convert JSON to data frame; learned from https://stackoverflow.com/a/27432542
-ff.readJSONs = function(JSONs) {
-  return(
-    rbind.fill( 
-      lapply(
-        lapply(
-          JSONs, 
-          function(x) unlist(x)), 
-        function(x) do.call("data.frame", as.list(x))
-      )))
-}
+source("ffFunctions.R")
 
 # generate basic data frame for testing
 ffk.currentJSON <- fromJSON(ffk.currentJSON)
