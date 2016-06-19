@@ -2,8 +2,6 @@
 # by Katrin Leinweber, June 2016
 # companion to FreifunkVis.R
 
-library(ggplot2)
-library(scales) # date_format
 library(stringr) # str_extract_all
 
 # enter sub-dir & use random sample of available JSONs

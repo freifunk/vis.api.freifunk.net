@@ -4,9 +4,10 @@
 # and https://wiki.freifunk.net/Ideas#Freifunk_API_visualisation_framework
 
 library(ggplot2)
-library(jsonlite) # fromJSON
-library(plyr) # rbind.fill
-library(RCurl) # getURL
+library(jsonlite)  # fromJSON
+library(plyr)      # rbind.fill
+library(RCurl)     # getURL
+library(scales)    # percent_format
 
 # load functions
 source("ffFunctions.R")
@@ -54,7 +55,7 @@ ffp.currentProtcols <- ggplot(
   mapping = aes(x     = protocol, 
                 y     = fraction, 
                 color = protocol)
-  ) + 
+) + 
   geom_point(show.legend = FALSE) + 
   scale_y_continuous(labels = percent_format(), 
                      limits = c(0, # ensure dynamic resizin of y-axis, with...
@@ -82,4 +83,3 @@ print(pie(x         = ffdf.currentCommonProtocols$used,
           clockwise = T
 ))
 dev.off()
-

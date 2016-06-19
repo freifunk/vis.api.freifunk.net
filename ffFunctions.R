@@ -7,7 +7,9 @@ ff.readJSONs = function(JSONs) {
           JSONs, 
           function(JSON) unlist(JSON)), 
         function(JSON) do.call("data.frame", as.list(JSON))
-      )))
+      )
+    )
+  )
 }
 
 # basic data frame cleaning
@@ -35,12 +37,14 @@ ff.prepareWordcloud <- function(text, remPunct = TRUE) {
 ff.plotWordcloud <- function(terms, filename = "FF_wordcloud.png") {
   png(filename, width = 960, height = 960, res = 300)
   print(
-    wordcloud(colnames(x), 
-              colSums(x),
-              colors       = ffk.palette,
-              random.color = T,
-              max.words    = length(ffk.palette), 
-              min.freq     = 2
-    ))
+    wordcloud(
+      colnames(terms),
+      colSums(terms),
+      colors       = ffk.palette,
+      random.color = TRUE,
+      max.words    = length(ffk.palette), 
+      min.freq     = 2
+    )
+  )
   dev.off()
 }
