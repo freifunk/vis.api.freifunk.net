@@ -21,8 +21,8 @@ ffk.currentJSON <- gsub(
 )
 
 # generate basic data frame for testing
-ffk.currentJSON <- fromJSON(ffk.currentJSON)
-ffdf <- ff.readJSONs(ffk.currentJSON)
+ffk.fromCurrentJSON <- fromJSON(ffk.currentJSON)
+ffdf <- ff.readJSONs(ffk.fromCurrentJSON)
 ffdf <- ff.cleanDF(ffdf)
 
 
