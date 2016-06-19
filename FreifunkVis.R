@@ -50,25 +50,41 @@ ffdf.currentProtcols$protocol <- factor(
   levels = ffdf.currentProtcols$protocol[order(ffdf.currentProtcols$used)])
 ffdf.currentProtcols$fraction <- ffdf.currentProtcols$used/sum(ffdf.currentProtcols$used)
 
+# plot current routing protocol fractions; needs several runs & 
+# human decision how much overlap between rare protocol's labels is tolerable
 ffp.currentProtcols <- ggplot(
-  data = ffdf.currentProtcols, 
-  mapping = aes(x     = protocol, 
-                y     = fraction, 
-                color = protocol)
+  data    = ffdf.currentProtcols, 
+  mapping = aes(
+    x     = "protocol",  # necessary for stacking protocol names
+    y     = fraction,
+    label = protocol,
+    color = "#dc0067"    # necessary for position_jitterdodge()
+  )
 ) + 
-  geom_point(show.legend = FALSE) + 
-  scale_y_continuous(labels = percent_format(), 
-                     limits = c(0, # ensure dynamic resizin of y-axis, with...
-                                max(ffdf.currentProtcols$fraction)*1.1) # ... upper tick mark
+  # learned from http://stackoverflow.com/a/15625149/4341322
+  geom_text(show.legend = FALSE, 
+            position    = position_jitterdodge(
+              jitter.width = 1, 
+              dodge.width  = 1
+            )
   ) +
-  scale_color_manual(values = ffk.palette) +
-  labs(title = "Fractions of currently used routing protocols", 
+  scale_color_manual(values = "#dc0067") +  # necessary for coloring data points
+  scale_y_continuous(
+    labels = percent_format(), 
+    limits = c(0,  # ensure dynamic resizin of y-axis, with...
+               max(ffdf.currentProtcols$fraction)*1.1)  # ... upper tick mark
+  ) +
+  labs(title = "Current routing", 
        x = NULL, y = NULL, color = NULL) + 
-  theme_classic()
+  theme_classic() +
+  theme(
+    text = element_text(color = "#009ee0"),
+    axis.text.x	= element_blank(),
+    axis.ticks	= element_blank()
+  )
 ffp.currentProtcols
 
-ggsave(filename = "FF_protocols.png", 
-       plot = ffp.currentProtcols)
+ggsave("FF_protocols.png", plot = ffp.currentProtcols, width = 3)
 
 
 # sort protocols by popularity & remove rare for cleaner pie chart
