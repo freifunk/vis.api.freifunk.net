@@ -1,3 +1,12 @@
+# prevent "lexical error: invalid character inside string."
+ff.cleanJSON <- function(JSON) {
+  JSON <- gsub(
+    x = JSON,
+    pattern = "\r\n",
+    replacement = " "
+  )
+}
+
 # convert JSON to data frame; learned from https://stackoverflow.com/a/27432542
 ff.readJSONs = function(JSONs) {
   return(

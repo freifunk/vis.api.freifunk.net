@@ -14,11 +14,8 @@ source("ffFunctions.R")
 
 # read in JSON & remove line breaks
 # prevents "lexical error: invalid character inside string." in fromJSON
-ffk.currentJSON <- gsub(
-  x = getURL("https://api.freifunk.net/data/ffSummarizedDir.json"),
-  pattern = "\r\n",
-  replacement = " "
-)
+ffk.currentJSON <- getURL("https://api.freifunk.net/data/ffSummarizedDir.json")
+ffk.currentJSON <- ff.cleanJSON(ffk.currentJSON)
 
 # generate basic data frame for testing
 ffk.fromCurrentJSON <- fromJSON(ffk.currentJSON)
