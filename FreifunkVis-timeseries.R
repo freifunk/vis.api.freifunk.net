@@ -29,7 +29,7 @@ ff.df$DateTime <- as.Date(
     ), format = "%Y%m%d-%H.%M.%S")
 
 # export data
-write.csv2(x = ff.df, file = "00000000-ffSummarizedDir.csv", row.names = FALSE)
+write.csv(x = ff.df, file = "00000000-ffSummarizedDir.csv", row.names = FALSE)
 
 # plot total node number over time; colors from https://wiki.freifunk.net/Freifunk-Styles
 ffp.nodeNumber <- ggplot(data = ff.df, 
