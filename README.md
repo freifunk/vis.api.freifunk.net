@@ -6,9 +6,9 @@ Future goals: see [issues](https://github.com/freifunk/vis.api.freifunk.net/issu
 
 ## Time series 
 
-![](FF_nodes_per_community.png)
+![](FF_nodes_timeline.png)
 
-Uses a 240th fraction of the [historical JSONs](https://api.freifunk.net/data/history/).
+A few dozen data points were omitted, because their JSONs caused parsing problems, like empty CSVs.
 
 ## Word cloud of community descriptions
 

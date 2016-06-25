@@ -2,78 +2,54 @@
 # by Katrin Leinweber, June 2016
 # companion to FreifunkVis.R
 
-library(stringr) # str_extract_all
+### PREPARATION (naive)
+# 1. Download .json.tar.gz & .json files from https://api.freifunk.net/data/history/
+# 2. Extract .tar.gz files with `for file in *.tar.gz; do tar -zxf $file; done`
+# 3. Scrape node numbers from .json files & clean with `for i in $(ls *-ffSummarizedDir.json) ; do cat $i | jq '..|.nodes?' | sed '/\s*null/d' | sed '/\"/d' | sed '/{/d' | sed '/}/d' | sed '/\[/d' | sed '/\]/d' > $i.csv ; done`
 
-# enter sub-dir & use random sample of available JSONs
-setwd(paste0(getwd(), "/JSONs"))
-ffk.JSONs <- sample(x = list.files(pattern = "[0-9]{8}-.*-ffSummarizedDir.json$"), 
-                    size = 30)
-ffk.days <- as.character(str_extract_all(ffk.JSONs, pattern = "[0-9]{8}"))
+# find CSVs
+ff.path <- "~/GitHub/vis.api.freifunk.net/CSVs/"
+ff.files <- list.files(path = ff.path, pattern = "*-ffSummarizedDir.json.csv")
 
-if ("00000000-ffSummarizedDir.csv" %in% list.files(getwd())) {
-  
-  # use summary file if available, instead of reading files individually
-  try(ffdf.known <- read.csv2("00000000-ffSummarizedDir.csv", 
-                              encoding = "UTF-8"))
-  
-  # check for existing ffdf date & merge with new
-  if (length(unique(ffdf.known$mtime)) < length(ffk.JSONs)) {
-    # naive, because single FF_JSON can include several different days
-    # tried (unique(gsub("-", "", as.character(ffdf.known$mtime))) %in% ffk.days),
-    # but returns list of Booleans => unsuitable for if condition
-    
-    # read in & generate data frame only from new JSONs
-    ffk.knownDays <- gsub(pattern     = "-",
-                          replacement = "",
-                          x           = unique(ffdf.known$mtime)
-    )
-    ffk.newDays <- setdiff(ffk.days, ffk.knownDays)
-    ffdf.new <- rbind.fill(
-      lapply(
-        lapply(
-          # list all new filenames; learned from http://stackoverflow.com/a/7664655/4341322
-          list.files(pattern = paste(ffk.newDays, collapse="|")), 
-          fromJSON
-        ), 
-        ff.readJSONs
-      ))
-    
-    # combine known & new data frames
-    ffdf <- rbind.fill(ffdf.known, ffdf.new)  
-    # learned from http://stackoverflow.com/a/27313467
-  }
-} else {
-  # combine all JSONs into single data frame
-  ffdf <- rbind.fill(lapply(lapply(ffk.JSONs, fromJSON), ff.readJSONs))
-  # same as inner else, just to catch edge case of repetive plotting without adding new JSONs
-}
+# read & sum node numbers for each timestamp
+ff.allNodes <- lapply(paste0(ff.path, ff.files), read.csv)
+ff.allSums <- lapply(ff.allNodes, sum)
 
-ffdf <- ff.cleanDF(ffdf)
+# convert node numbers into into data frame
+ff.df <- as.data.frame(unlist(ff.allSums))
+colnames(ff.df) <- "Nodes"
 
-# export combined data frame
-write.csv2(x = ffdf, file = "00000000-ffSummarizedDir.csv", row.names = FALSE)
-setwd(sub("/JSONs", "", getwd()))
+# assign timestamps to each sum & convert to useful format
+ff.df$DateTime <- ff.files
+ff.df$DateTime <- as.Date(
+  gsub(
+    pattern = "-ffSummarizedDir.json.csv",
+    replacement = "",
+    x = ff.df$DateTime
+    ), format = "%Y%m%d-%H.%M.%S")
 
-# plot timeseries of average node number per community over time
-ffp.nodeNumber <- ggplot(data = subset(x = ffdf, 
-                                       select = c("name", 
-                                                  "mtime", 
-                                                  "state.nodes"
-                                       )), 
-                         mapping = aes(x = mtime,
-                                       y = state.nodes)) + 
+# export data
+write.csv2(x = ff.df, file = "00000000-ffSummarizedDir.csv", row.names = FALSE)
+
+# plot total node number over time; colors from https://wiki.freifunk.net/Freifunk-Styles
+ffp.nodeNumber <- ggplot(data = ff.df, 
+                         mapping = aes(x = DateTime,
+                                       y = Nodes)) + 
   geom_point(stat = "summary", color = "#ffb400") +
-  stat_smooth(color = "#dc0067", se = FALSE) + 
-  scale_x_date(labels = date_format("%b '%y")) +
+  scale_x_date(date_breaks = "3 months", labels = date_format("%b '%y")) +
+  scale_y_continuous(breaks = seq(0, max(ff.df$Nodes)*1.1, 5000)) +
   expand_limits(y = 0) +  # learned from http://stackoverflow.com/a/13701732/4341322
-  ggtitle("Nodes per Community (average) over Time") +
+  ggtitle("Number of Freifunk nodes over time") +
   xlab(NULL) + ylab(NULL) +
   theme_minimal() +
-  theme(axis.text.x	= element_text(hjust = 0.8),
+  theme(text = element_text(color = "#dc0067"),
         panel.grid.major = element_line(color = "#009ee0"),
-        panel.grid.minor = element_blank())
+        panel.grid.minor = element_blank()
+        )
 ffp.nodeNumber
-# colors from https://wiki.freifunk.net/Freifunk-Styles
 
 ggsave(plot = ffp.nodeNumber, 
-       filename = "FF_nodes_per_community.png")
+       filename = "FF_nodes_timeline.png",
+       width = 6,
+       height = 3
+       )

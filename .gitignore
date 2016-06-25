@@ -74,6 +74,9 @@ vignettes/*.pdf
 
 
 ### User-defined rules
+CSVs/
+JSONs/
+JSONs.tar.gz/
 *-ffSummarizedDir.json
 *.csv
 *.json
