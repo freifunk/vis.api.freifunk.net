@@ -4,6 +4,8 @@ A growing collection of R scripts to extract data from the Freifunk API JSONs an
 
 Future goals: see [issues](https://github.com/freifunk/vis.api.freifunk.net/issues).
 
+2024-05-28: _This is now a GSoC project_, see [the wiki](https://github.com/freifunk/vis.api.freifunk.net/wiki/Diagram-Generation) for planned infrastructure diagram.
+
 ## Time series 
 
 ![](FF_nodes_timeline.png)
