@@ -6,26 +6,7 @@ Future goals: see [issues](https://github.com/freifunk/vis.api.freifunk.net/issu
 
 2024-05-28: _This is now a GSoC project_, see [the wiki](https://github.com/freifunk/vis.api.freifunk.net/wiki/Diagram-Generation) for planned infrastructure diagram.
 
-## Time series 
-
-![](FF_nodes_timeline.png)
-
-A few dozen data points were omitted, because their JSONs caused parsing problems, like empty CSVs.
-
-## Word cloud of community descriptions
-
-![](FF_description_cloud.png)
-
-## Word cloud of services run by Freifunk communities
-
-![](FF_service_cloud.png)
-
-Presented terms appear at lest twice in the [current JSON](https://api.freifunk.net/data/ffSummarizedDir.json).
-
-## Currently used routing protocols
-
-![](FF_protocols.png)
-
-![](FF_protocols_pie.png)
-
-
+Todo:
+- [ ] Triage old issues
+- [ ] Set up MariaDB
+- [ ] Start writing the JSON to SQL processor
