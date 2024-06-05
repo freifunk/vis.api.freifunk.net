@@ -2,7 +2,7 @@ services:
   mongodb:
     image: mongo
     container_name: mongodb
-    restart: always
+#    restart: always
     ports:
       - '27017:27017'
     environment:
@@ -10,3 +10,4 @@ services:
       MONGO_INITDB_ROOT_PASSWORD: PASSWORD
     volumes:
       - ./db:/data/db
+      - ./docker-entrypoint-initdb.d/mongo-init.js:/docker-entrypoint-initdb.d/mongo-init.js:ro
