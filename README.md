@@ -4,6 +4,6 @@ A pipeline to load data from the Freifunk API JSONs and create a GraphQL interfa
 Currently being worked on as a Google Summer of Code project.
 
 Todo:
-- [ ] Triage old issues
+- [X] Triage old issues
 - [X] Set up ~~MariaDB~~ MongoDB
-- [ ] Start writing the JSON to SQL processor
+- [ ] Start writing a MongoDB script to add JSON objects in a time series <-- you are here
