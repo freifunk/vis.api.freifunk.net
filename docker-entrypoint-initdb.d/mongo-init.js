@@ -2,7 +2,7 @@ print('Creating database');
 
 db = db.getSiblingDB('communities');
 db.createCollection(
-"hourly_snapshot",
+"hourlySnapshot",
 {
   timeseries: {
   timeField: "timestamp",
