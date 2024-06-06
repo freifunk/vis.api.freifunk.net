@@ -1,3 +1,8 @@
+## Rust files
+json_adder/target
+json_adder/release
+json_adder/Cargo.lock
+
 # Logs
 logs
 *.log
@@ -70,8 +75,6 @@ vignettes/*.pdf
 # Temporary files created by R markdown
 *.utf8.md
 *.knit.md
-
-
 
 ### User-defined rules
 CSVs/
