@@ -3,6 +3,10 @@ json_adder/target
 json_adder/release
 json_adder/Cargo.lock
 
+# MongoDB container
+db/
+
+
 # Logs
 logs
 *.log
