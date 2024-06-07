@@ -3,7 +3,19 @@ use mongodb::{
     options::{ClientOptions, ServerApi, ServerApiVersion},
     Client,
 };
+// use serde_json_schema::Schema;
+use serde::{Deserialize, Serialize};
+use std::fs;
+
+// Next steps here:
+// Scan through json files in directory < -- do this last
+// for each file: read it into a struct
+// insert record into the database
+
+// ../../data/history/20240129-10.01.02-ffSummarizedDir.json
+
 #[tokio::main]
+
 async fn main() -> mongodb::error::Result<()> {
     let uri: &str = "mongodb://ADMIN:PASSWORD@localhost:27017";
 
@@ -32,7 +44,7 @@ async fn main() -> mongodb::error::Result<()> {
     };
     let result = collection.insert_one(doc, None).await?;
 
-    println!("{:#?}", result);
+    println!("Inserted a document with _id: {}", result.inserted_id);
 
     Ok(())
 }
