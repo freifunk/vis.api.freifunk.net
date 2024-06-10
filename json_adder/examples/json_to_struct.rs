@@ -1,17 +1,15 @@
-// #[derive(Serialize, Deserialize)]
-// use std::env;
+// use serde::{Deserialize, Serialize};
+use serde_json::Value;
 use std::fs;
-use std::error::Error;
+use mongodb::bson;
 
-
-fn main() -> Result<(), Box<dyn Error>> {
+fn main() {
     let file_path: &str =
         "../../api.freifunk.net/data/history/20240129-10.01.02-ffSummarizedDir.json";
 
-    // println!("In file {}", file_path);
+    let contents: String = fs::read_to_string(file_path).expect("couldn\'t read file");
 
-    let contents: String = fs::read_to_string(file_path)?;
-
-    // println!("With text:\n{contents}");
-    Ok(())
+    let value: Value = serde_json::from_str(&contents).expect("couldn\'t parse json");
+    let bson_doc = bson::to_document(&value);
+    // println!("{:?}", bson_doc);
 }
