@@ -14,3 +14,7 @@ serde_json = "1"
 [dependencies.mongodb]
 version = "2.8"
 features = ["tokio-runtime"]
+
+[[example]]
+name = "json_to_struct"
+path = "examples/json_to_struct.rs"
