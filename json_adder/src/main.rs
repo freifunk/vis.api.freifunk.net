@@ -37,11 +37,11 @@ async fn main() -> mongodb::error::Result<()> {
     let file_path: &str =
         "../../api.freifunk.net/data/history/20240129-10.01.02-ffSummarizedDir.json";
 
-    let contents: String = fs::read_to_string(file_path).expect("couldn\'t read file");
-    // let value: Value = serde_json::from_str(&contents).expect("couldn\'t parse json");
-    // let bson_doc = bson::to_document(&value).expect_err("couldn\'t convert value to bson");
+    let contents: String = fs::read_to_string(file_path).expect("couldn't read file");
+    let value: Value = serde_json::from_str(&contents).expect("couldn't parse json");
+    let bson_doc = bson::to_bson(&value).expect("couldn't convert value to bson").as_document().unwrap().clone();
 
-    let result = snapshot_collection.insert_one(&contents, None).await?;
+    let result = snapshot_collection.insert_one(bson_doc, None).await?;
 
     println!("Inserted a document with _id: {}", result.inserted_id);
 
