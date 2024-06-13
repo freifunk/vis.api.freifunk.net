@@ -2,6 +2,8 @@
 json_adder/target
 json_adder/release
 json_adder/Cargo.lock
+# test data directory
+json_adder/data
 
 # MongoDB container
 db/
