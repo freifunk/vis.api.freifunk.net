@@ -15,6 +15,8 @@ use std::fs;
 #[tokio::main]
 
 async fn main() -> mongodb::error::Result<()> {
+
+    // Is it possible to wrap up some of this boilerplate connection code?
     let uri: &str = "mongodb://ADMIN:PASSWORD@localhost:27017";
     let mut client_options = ClientOptions::parse_async(uri).await?;
 
@@ -31,7 +33,8 @@ async fn main() -> mongodb::error::Result<()> {
 
     // File path for sample json file, change this later
     let file_path: &str =
-        "../../api.freifunk.net/data/history/20240129-10.01.02-ffSummarizedDir.json";
+        // "../../api.freifunk.net/data/history/20240129-10.01.02-ffSummarizedDir.json";
+        "data/20240528-07.01.01-ffSummarizedDir.json";
 
     // Convert JSON to string, then to value, then to bson
     let contents: String = fs::read_to_string(file_path).expect("couldn't read file");
@@ -45,7 +48,7 @@ async fn main() -> mongodb::error::Result<()> {
     }
 
     // Construct bson datetime function
-    fn mtime_to_bson (mtime: &str) -> bson::DateTime {
+    fn mtime_to_bson(mtime: &str) -> bson::DateTime {
         // mtime is surrounded by quotes, and when passed into parse_from_str, it is
         // cut down to the format described in fmt
         let fmt = "%Y-%m-%d %H:%M:%S";
@@ -59,33 +62,34 @@ async fn main() -> mongodb::error::Result<()> {
         bson_dt
     }
 
+
+    let mut communities_in_snapshot: Vec<Community> = Vec::new();
     for (community_label, community_info) in value.as_object().unwrap() {
-       
         let mtime = &community_info["mtime"].to_string();
         let bson_time = mtime_to_bson(mtime);
-        println!("{:?}", bson_time);
 
         let community = Community {
             label: community_label.to_string(),
             timestamp: bson_time,
-            content: community_info.clone()
+            content: community_info.clone(),
         };
 
-
         // let bson_doc: Document = bson::to_bson(&value)
-    //     .expect("couldn't convert value to bson")
-    //     .as_document()
-    //     .unwrap()
-    //     .clone();
+        //     .expect("couldn't convert value to bson")
+        //     .as_document()
+        //     .unwrap()
+        //     .clone();
 
-    // Insert this the bson into the collection
-    let result = snapshot_collection.insert_one(community, None).await?;
-
-    println!("Inserted a document with _id: {}", result.inserted_id);
-    
+        // Add community to list
+        communities_in_snapshot.push(community);
     }
 
-
+    // Insert lots of documents in one go
+    let insert_many_result = snapshot_collection.insert_many(communities_in_snapshot, None).await?;
+    println!("Inserted documents with _ids:");
+    for (_key, value) in &insert_many_result.inserted_ids {
+        println!("{}", value);
+    }
 
     Ok(())
 }
