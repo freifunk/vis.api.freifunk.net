@@ -15,7 +15,6 @@ use std::fs;
 #[tokio::main]
 
 async fn main() -> mongodb::error::Result<()> {
-
     // Is it possible to wrap up some of this boilerplate connection code?
     let uri: &str = "mongodb://ADMIN:PASSWORD@localhost:27017";
     let mut client_options = ClientOptions::parse_async(uri).await?;
@@ -29,12 +28,12 @@ async fn main() -> mongodb::error::Result<()> {
 
     // Connect to the database and the snapshot collection document
     let database = client.database("communities");
-    let snapshot_collection = database.collection("hourlySnapshot");
+    let snapshot_collection = database.collection("hourly_snapshot");
 
     // File path for sample json file, change this later
     let file_path: &str =
-        // "../../api.freifunk.net/data/history/20240129-10.01.02-ffSummarizedDir.json";
-        "data/20240528-07.01.01-ffSummarizedDir.json";
+        "../../api.freifunk.net/data/history/20240129-10.01.02-ffSummarizedDir.json";
+    // "data/20240528-07.01.01-ffSummarizedDir.json";
 
     // Convert JSON to string, then to value, then to bson
     let contents: String = fs::read_to_string(file_path).expect("couldn't read file");
@@ -62,7 +61,6 @@ async fn main() -> mongodb::error::Result<()> {
         bson_dt
     }
 
-
     let mut communities_in_snapshot: Vec<Community> = Vec::new();
     for (community_label, community_info) in value.as_object().unwrap() {
         let mtime = &community_info["mtime"].to_string();
@@ -74,18 +72,13 @@ async fn main() -> mongodb::error::Result<()> {
             content: community_info.clone(),
         };
 
-        // let bson_doc: Document = bson::to_bson(&value)
-        //     .expect("couldn't convert value to bson")
-        //     .as_document()
-        //     .unwrap()
-        //     .clone();
-
-        // Add community to list
         communities_in_snapshot.push(community);
     }
 
     // Insert lots of documents in one go
-    let insert_many_result = snapshot_collection.insert_many(communities_in_snapshot, None).await?;
+    let insert_many_result = snapshot_collection
+        .insert_many(communities_in_snapshot, None)
+        .await?;
     println!("Inserted documents with _ids:");
     for (_key, value) in &insert_many_result.inserted_ids {
         println!("{}", value);
