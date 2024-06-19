@@ -12,6 +12,8 @@ on:
       
 env:
   CARGO_TERM_COLOR: always
+  SCCACHE_GHA_ENABLED: "true"
+  RUSTC_WRAPPER: "sccache"
 
 jobs:
   build:
@@ -23,8 +25,13 @@ jobs:
 
 
     steps:
+    - name: Run sccache-cache
+      uses: mozilla-actions/sccache-action@v0.0.5
     - uses: actions/checkout@v4
-    - name: Build
+    - name: Check code
       run: cargo check
     - name: Run tests
-      run: cargo test --verbose
+      run: cargo test
+    - name: Run sccache stat for check
+      shell: bash
+      run: ${SCCACHE_PATH} --show-stats
