@@ -12,9 +12,12 @@ use serde::{Deserialize, Serialize};
 use serde_json::Value;
 use std::fs;
 
+mod setup_db;
+
 #[tokio::main]
 
 async fn main() -> mongodb::error::Result<()> {
+    setup_db::get_collection().await;
     // Is it possible to wrap up some of this boilerplate connection code?
     let uri: &str = "mongodb://ADMIN:PASSWORD@localhost:27017";
     let mut client_options = ClientOptions::parse_async(uri).await?;

@@ -12,27 +12,28 @@ use mongodb::{
 };
 use std::error::Error;
 use tokio;
+use anyhow;
 
-#[tokio::main]
+// #[tokio::main]
 
-async fn main() -> Result<Collection<Document>, Error> {
+pub async fn get_collection() -> Collection<Document> {
     // boilerplate connection code
     let uri: &str = "mongodb://ADMIN:PASSWORD@localhost:27017";
-    let mut client_options = ClientOptions::parse_async(uri).await?;
+    let mut client_options = ClientOptions::parse_async(uri).await.unwrap();
 
     // Set the server_api field of the client_options object to Stable API version 1
     let server_api = ServerApi::builder().version(ServerApiVersion::V1).build();
     client_options.server_api = Some(server_api);
 
     // Create a new client and connect to the server
-    let client: Client = Client::with_options(client_options)?;
+    let client: Client = Client::with_options(client_options).unwrap();
 
-    let db_list: Vec<String> = client.list_database_names(doc! {}, None).await?;
+    let db_list: Vec<String> = client.list_database_names(doc! {}, None).await.unwrap();
     println!("List databases: {:?}", db_list);
     let db = client.database("communities");
     
     // List collections in the database
-    let coll_list: Vec<String> = db.list_collection_names(doc! {}).await?;
+    let coll_list: Vec<String> = db.list_collection_names(doc! {}).await.unwrap();
     println!("List collections in database: {:?}", coll_list);
 
     // If the collection doesn't exist, create it
@@ -45,10 +46,11 @@ async fn main() -> Result<Collection<Document>, Error> {
         let coll_opts = CreateCollectionOptions::builder()
             .timeseries(ts_opts)
             .build();
-        db.create_collection("hourly_snapshot", coll_opts).await?;
+        db.create_collection("hourly_snapshot", coll_opts).await.unwrap();
     };
 
     // Return the collection
     let snapshot_collection: Collection<Document> = db.collection("hourly_snapshot");
     return snapshot_collection
 }
+
