@@ -17,21 +17,8 @@ mod setup_db;
 #[tokio::main]
 
 async fn main() -> mongodb::error::Result<()> {
-    setup_db::get_collection().await;
-    // Is it possible to wrap up some of this boilerplate connection code?
-    let uri: &str = "mongodb://ADMIN:PASSWORD@localhost:27017";
-    let mut client_options = ClientOptions::parse_async(uri).await?;
-
-    // Set the server_api field of the client_options object to Stable API version 1
-    let server_api = ServerApi::builder().version(ServerApiVersion::V1).build();
-    client_options.server_api = Some(server_api);
-
-    // Create a new client and connect to the server
-    let client: Client = Client::with_options(client_options)?;
-
-    // Connect to the database and the snapshot collection document
-    let database = client.database("communities");
-    let snapshot_collection = database.collection("hourly_snapshot");
+        
+    let snapshot_collection = setup_db::get_collection().await;
 
     for file in fs::read_dir("../../api.freifunk.net/data/history/").unwrap() {
         // File path for sample json file, change this later
