@@ -1,22 +1,23 @@
-use bson::{doc, Document};
-use futures::TryStreamExt;
-#[allow(unused_imports)]
-#[allow(dead_code)]
+use bson::doc;
 use mongodb::{
-    bson,
-    options::{
+    bson, options::{
         ClientOptions, CreateCollectionOptions, ServerApi, ServerApiVersion, TimeseriesGranularity,
         TimeseriesOptions,
-    },
-    Client, Collection,
+    }, Client, Collection
 };
-use std::error::Error;
-use tokio;
-use anyhow;
+use serde::{Deserialize, Serialize};
+use serde_json::Value;
 
-// #[tokio::main]
 
-pub async fn get_collection() -> Collection<Document> {
+#[derive(Serialize, Deserialize, Debug)]
+pub struct Community {
+    pub label: String,
+    pub timestamp: bson::DateTime,
+    pub content: Value,
+}
+
+pub async fn get_collection() -> Collection<Community> {
+
     // boilerplate connection code
     let uri: &str = "mongodb://ADMIN:PASSWORD@localhost:27017";
     let mut client_options = ClientOptions::parse_async(uri).await.unwrap();
@@ -37,7 +38,10 @@ pub async fn get_collection() -> Collection<Document> {
     println!("List collections in database: {:?}", coll_list);
 
     // If the collection doesn't exist, create it
-    if coll_list.iter().any(|e| e != "hourly_snapshot") {
+    if coll_list.iter().any(|e: &String| e == "hourly_snapshot") {
+        println!("hourly_snapshot exists, move on");
+    } else {
+        println!("hourly_snapshot collection not found, creating it");
         let ts_opts = TimeseriesOptions::builder()
             .time_field("timestamp".to_string())
             .meta_field(Some("label".to_string()))
@@ -50,7 +54,7 @@ pub async fn get_collection() -> Collection<Document> {
     };
 
     // Return the collection
-    let snapshot_collection: Collection<Document> = db.collection("hourly_snapshot");
+    let snapshot_collection: Collection<Community> = client.database("communities").collection("hourly_snapshot");
     return snapshot_collection
 }
 

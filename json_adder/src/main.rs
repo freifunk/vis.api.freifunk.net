@@ -1,24 +1,13 @@
-#[allow(unused_imports)]
-#[allow(dead_code)]
-use bson::Document;
 use chrono::{NaiveDateTime, Utc};
-use core::fmt;
-use mongodb::{
-    bson,
-    options::{ClientOptions, ServerApi, ServerApiVersion},
-    Client,
-};
-use serde::{Deserialize, Serialize};
+use mongodb::{bson, Collection};
 use serde_json::Value;
 use std::fs;
-
 mod setup_db;
 
 #[tokio::main]
 
 async fn main() -> mongodb::error::Result<()> {
-        
-    let snapshot_collection = setup_db::get_collection().await;
+    let snapshot_collection: Collection<setup_db::Community> = setup_db::get_collection().await;
 
     for file in fs::read_dir("../../api.freifunk.net/data/history/").unwrap() {
         // File path for sample json file, change this later
@@ -27,13 +16,6 @@ async fn main() -> mongodb::error::Result<()> {
         // Convert JSON to string, then to value, then to bson
         let contents: String = fs::read_to_string(file_path).expect("couldn't read file");
         let value: Value = serde_json::from_str(&contents).expect("couldn't parse json");
-
-        #[derive(Serialize, Deserialize, Debug)]
-        struct Community {
-            label: String,
-            timestamp: bson::DateTime,
-            content: Value,
-        }
 
         // Construct bson datetime function
         fn mtime_to_bson(mtime: &str) -> bson::DateTime {
@@ -51,12 +33,12 @@ async fn main() -> mongodb::error::Result<()> {
             bson_dt
         }
 
-        let mut communities_in_snapshot: Vec<Community> = Vec::new();
+        let mut communities_in_snapshot: Vec<setup_db::Community> = Vec::new();
         for (community_label, community_info) in value.as_object().unwrap() {
             let mtime = &community_info["mtime"].to_string();
             let bson_time = mtime_to_bson(mtime);
 
-            let community = Community {
+            let community = setup_db::Community {
                 label: community_label.to_string(),
                 timestamp: bson_time,
                 content: community_info.clone(),
