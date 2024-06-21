@@ -5,18 +5,9 @@ use mongodb::{
         TimeseriesOptions,
     }, Client, Collection
 };
-use serde::{Deserialize, Serialize};
-use serde_json::Value;
+use crate::models;
 
-
-#[derive(Serialize, Deserialize, Debug)]
-pub struct Community {
-    pub label: String,
-    pub timestamp: bson::DateTime,
-    pub content: Value,
-}
-
-pub async fn get_collection() -> Collection<Community> {
+pub async fn get_collection() -> Collection<models::Community> {
 
     // boilerplate connection code
     let uri: &str = "mongodb://ADMIN:PASSWORD@localhost:27017";
@@ -54,7 +45,7 @@ pub async fn get_collection() -> Collection<Community> {
     };
 
     // Return the collection
-    let snapshot_collection: Collection<Community> = client.database("communities").collection("hourly_snapshot");
+    let snapshot_collection: Collection<models::Community> = db.collection("hourly_snapshot");
     return snapshot_collection
 }
 

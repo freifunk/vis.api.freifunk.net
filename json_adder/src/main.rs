@@ -3,11 +3,12 @@ use mongodb::{bson, Collection};
 use serde_json::Value;
 use std::fs;
 mod setup_db;
+mod models;
 
 #[tokio::main]
 
 async fn main() -> mongodb::error::Result<()> {
-    let snapshot_collection: Collection<setup_db::Community> = setup_db::get_collection().await;
+    let snapshot_collection: Collection<models::Community> = setup_db::get_collection().await;
 
     for file in fs::read_dir("../../api.freifunk.net/data/history/").unwrap() {
         // File path for sample json file, change this later
@@ -33,12 +34,12 @@ async fn main() -> mongodb::error::Result<()> {
             bson_dt
         }
 
-        let mut communities_in_snapshot: Vec<setup_db::Community> = Vec::new();
+        let mut communities_in_snapshot: Vec<models::Community> = Vec::new();
         for (community_label, community_info) in value.as_object().unwrap() {
             let mtime = &community_info["mtime"].to_string();
             let bson_time = mtime_to_bson(mtime);
 
-            let community = setup_db::Community {
+            let community = models::Community {
                 label: community_label.to_string(),
                 timestamp: bson_time,
                 content: community_info.clone(),
