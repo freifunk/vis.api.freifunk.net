@@ -40,7 +40,7 @@ async fn main() -> mongodb::error::Result<()> {
             let bson_time = mtime_to_bson(mtime);
 
             let community = models::Community {
-                label: community_label.to_string(),
+                _id: community_label.to_string(),
                 timestamp: bson_time,
                 content: community_info.clone(),
             };
