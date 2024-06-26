@@ -5,12 +5,14 @@ use std::fs;
 mod setup_db;
 mod models;
 
+const DATA_DIRECTORY: &str = "../../api.freifunk.net/data/history/";
+
 #[tokio::main]
 
 async fn main() -> mongodb::error::Result<()> {
     let snapshot_collection: Collection<models::Community> = setup_db::get_collection().await;
 
-    for file in fs::read_dir("../../api.freifunk.net/data/history/").unwrap() {
+    for file in fs::read_dir(DATA_DIRECTORY).unwrap() {
         // File path for sample json file, change this later
         let file_path = file.unwrap().path();
 
