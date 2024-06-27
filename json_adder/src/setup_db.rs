@@ -10,8 +10,9 @@ use crate::models;
 pub async fn get_collection() -> Collection<models::Community> {
 
     // boilerplate connection code
-    let uri: &str = "mongodb://ADMIN:PASSWORD@localhost:27017";
-    let mut client_options = ClientOptions::parse_async(uri).await.unwrap();
+    // changed this to a const, test it?
+    const URI: &str = "mongodb://ADMIN:PASSWORD@localhost:27017";
+    let mut client_options = ClientOptions::parse_async(URI).await.unwrap();
 
     // Set the server_api field of the client_options object to Stable API version 1
     let server_api = ServerApi::builder().version(ServerApiVersion::V1).build();
