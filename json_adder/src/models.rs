@@ -3,7 +3,7 @@ use serde_json::Value;
 
 #[derive(Serialize, Deserialize, Debug)]
 pub struct Community {
-    pub _id: String,
+    pub metadata: String,
     pub timestamp: bson::DateTime,
     pub content: Value,
 }

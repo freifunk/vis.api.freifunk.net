@@ -36,7 +36,7 @@ pub async fn get_collection() -> Collection<models::Community> {
         println!("hourly_snapshot collection not found, creating it");
         let ts_opts = TimeseriesOptions::builder()
             .time_field("timestamp".to_string())
-            .meta_field(Some("label".to_string()))
+            .meta_field(Some("metadata".to_string()))
             .granularity(Some(TimeseriesGranularity::Hours))
             .build();
         let coll_opts = CreateCollectionOptions::builder()
