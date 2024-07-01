@@ -33,7 +33,7 @@ coverage
 build/Release
 
 # Dependency directory
-node_modules
+graphql_server/node_modules
 
 # Optional npm cache directory
 .npm
