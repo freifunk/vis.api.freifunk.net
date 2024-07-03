@@ -1,24 +1,23 @@
-var { graphql, buildSchema } = require("graphql")
- 
-// Construct a schema, using GraphQL schema language
-var schema = buildSchema(`
-  type Query {
-    hello: String
-  }
-`)
- 
-// The rootValue provides a resolver function for each API endpoint
-var rootValue = {
-  hello() {
-    return "Hello world!"
-  }
-}
- 
-// Run the GraphQL query '{ hello }' and print out the response
-graphql({
-  schema,
-  source: "{ hello }",
-  rootValue
-}).then(response => {
-  console.log(response)
+const express = require('express');
+const graphqlHTTP = require('express-graphql').graphqlHTTP;
+const graphql = require('graphql');
+
+const QueryRoot = new graphql.GraphQLObjectType({
+	name: 'Query',
+	fields: () => ({
+		hello: {
+			type: graphql.GraphQLString,
+			resolve: () => "hello world!"
+		}
+	})
 })
+
+const schema = new graphql.GraphQLSchema({ query: QueryRoot });
+
+const app = express();
+
+app.use('/api', graphqlHTTP({
+	schema: schema,
+}));
+
+app.listen(4000);
