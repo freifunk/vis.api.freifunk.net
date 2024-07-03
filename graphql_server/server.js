@@ -18,6 +18,7 @@ const app = express();
 
 app.use('/api', graphqlHTTP({
 	schema: schema,
+	graphiql: true,
 }));
 
 app.listen(4000);
