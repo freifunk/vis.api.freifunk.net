@@ -21,7 +21,8 @@ const app = express();
 
 app.use('/api', graphqlHTTP({
 	schema,
-	rootValue: resolvers
+	rootValue: resolvers,
+	graphiql: true
 }));
 
 app.listen(4000);
