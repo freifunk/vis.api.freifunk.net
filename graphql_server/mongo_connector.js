@@ -1,13 +1,10 @@
-const mongoose = require('mongoose');
+const express = require('express');
+const graphqlHTTP = require('express-graphql');
+const { buildSchema } = require('graphql');
+const { MongoClient } = require('mongodb');
 
-main().catch(err => console.log(err));
+// don't steal my password please
+const password = encodeURIComponent("w6x)Kf9z:Y!j.+k");
 
-async function main() {
-  await mongoose.connect('mongodb://ADMIN:PASSWORD@localhost:27017');
-	const communitySchema = new mongoose.Schema({
-	});
-	const Community = mongoose.model('metadata', communitySchema);
-	const kittens = await Community.find();
-	console.log(kittens);
+const context = () => MongoClient.connect('mongodb+srv://pierremarshall:${password}@freifunktest.zsfzlav.mongodb.net/?retryWrites=true&w=majority&appName=freifunktest', { useNewUrlParser: true }).then(client => client.db('database_name'));
 
-}
