@@ -3,10 +3,7 @@ const graphqlHTTP = require('express-graphql').graphqlHTTP;
 const { graphql, buildSchema } = require('graphql');
 const { MongoClient } = require('mongodb');
 
-// don't steal my password please
-const password = encodeURIComponent("w6x)Kf9z:Y!j.+k");
-
-const context = () => MongoClient.connect('mongodb+srv://pierremarshall:${password}@freifunktest.zsfzlav.mongodb.net/').then(client => client.db('freifunktest'));
+const context = () => MongoClient.connect('mongodb+srv://databaseReader:freifunkfreifunk@freifunktest.zsfzlav.mongodb.net/?retryWrites=true&w=majority&appName=freifunktest').then(client => client.db('freifunktest'));
 
 // Construct a schema, using GraphQL schema language
 // this buildschema stuff can be replaced at some point
@@ -14,7 +11,7 @@ const context = () => MongoClient.connect('mongodb+srv://pierremarshall:${passwo
 const schema = buildSchema(`
   type Query {
     community: [Community]
-  }
+  },
   type Community {
     metadata: String,
     timestamp: String,
@@ -24,7 +21,7 @@ const schema = buildSchema(`
 
 // Provide resolver functions for your schema fields
 const resolvers = {
-	hello: (args, context) => context().then(db => db.collection('hourly_snapshot').find().toArray())
+	community: (args, context) => context().then(db => db.collection('hourly_snapshot').find().toArray())
 };
 
 // This is the server bit
