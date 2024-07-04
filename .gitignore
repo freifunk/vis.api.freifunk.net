@@ -84,7 +84,9 @@ vignettes/*.pdf
 CSVs/
 JSONs/
 JSONs.tar.gz/
-*-ffSummarizedDir.json
+*ffSummarizedDir.json
 *.csv
-*.json
 json_adder/json_adder
+
+# don't need node package-lock
+package-lock.json
