@@ -7,4 +7,8 @@ Todo:
 - [X] Triage old issues
 - [X] Set up MongoDB
 - [X] Start writing a MongoDB script to add JSON objects in a time series
-- [ ] Set up GraphQL server <-- you are here
+- [X] Set up GraphQL server
+- [X] Get some data through the pipeline from end to end
+
+Next steps:
+- [ ] Make the GraphQL Schema fit the JSON Schema for the database file

@@ -3,7 +3,7 @@ const graphqlHTTP = require('express-graphql').graphqlHTTP;
 const { graphql, buildSchema } = require('graphql');
 const { MongoClient } = require('mongodb');
 
-const context = () => MongoClient.connect('mongodb+srv://databaseReader:freifunkfreifunk@freifunktest.zsfzlav.mongodb.net/?retryWrites=true&w=majority&appName=freifunktest').then(client => client.db('freifunktest'));
+const context = () => MongoClient.connect('mongodb+srv://databaseReader:freifunkfreifunk@freifunktest.zsfzlav.mongodb.net/?retryWrites=true&w=majority&appName=freifunktest').then(client => client.db('communities'));
 
 // Construct a schema, using GraphQL schema language
 // this buildschema stuff can be replaced at some point
