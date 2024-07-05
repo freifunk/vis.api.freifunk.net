@@ -11,5 +11,5 @@ Todo:
 - [X] Get some data through the pipeline from end to end
 
 Next steps:
-- [ ] Make the GraphQL Schema fit the JSON Schema for the database file (#33)
-- [ ] Write blog post detailing all this, document how to set everything up! (#24)
+- [ ] Make the GraphQL Schema fit the JSON Schema for the database file (https://github.com/freifunk/vis.api.freifunk.net/issues/33)
+- [ ] Write blog post detailing all this, document how to set everything up! (https://github.com/freifunk/vis.api.freifunk.net/issues/24)
