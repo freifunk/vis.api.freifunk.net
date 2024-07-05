@@ -11,4 +11,5 @@ Todo:
 - [X] Get some data through the pipeline from end to end
 
 Next steps:
-- [ ] Make the GraphQL Schema fit the JSON Schema for the database file
+- [ ] Make the GraphQL Schema fit the JSON Schema for the database file (#33)
+- [ ] Write blog post detailing all this, document how to set everything up! (#24)
