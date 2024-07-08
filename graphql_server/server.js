@@ -13,15 +13,16 @@ const schema = buildSchema(`
     community: [Community]
   },
   type Community {
-    metadata: String,
+    metadata: String!,
     timestamp: String,
-    _id: String
+    _id: String,
+    content: String
  }
 `);
 
 // Provide resolver functions for your schema fields
 const resolvers = {
-	community: (args, context) => context().then(db => db.collection('hourly_snapshot').find().toArray())
+	community: (args, context) => context().then(db => db.collection('hourly_snapshot').find().limit(10).toArray())
 };
 
 // This is the server bit
