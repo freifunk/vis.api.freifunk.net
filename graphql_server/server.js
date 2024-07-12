@@ -10,7 +10,7 @@ const context = () => MongoClient.connect('mongodb+srv://databaseReader:freifunk
 // but for now
 const schema = buildSchema(`
   type Query {
-    communities: [Community!]!
+    communities (metadata: String): [Community!]!
   },
   type Community {
     metadata: String!,
@@ -23,9 +23,9 @@ const schema = buildSchema(`
 // resolver for top five weimarnetz results
 const resolvers = {
   communities: async (args, context) => {
+    console.log(args);
     const db = await context();
-    const filter = { metadata: "weimarnetz" };
-    return db.collection('hourly_snapshot').find(filter).limit(5).toArray();
+    return db.collection('hourly_snapshot').find(args).limit(5).toArray();
   },
 };
 
