@@ -20,10 +20,10 @@ const resolvers = {
 const app = express();
 
 app.use('/api', graphqlHTTP({
-	schema,
-	rootValue: resolvers,
-	context,
-	graphiql: true
+  schema,
+  rootValue: resolvers,
+  context,
+  graphiql: true
 }));
 
 app.listen(4000);
