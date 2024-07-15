@@ -6,7 +6,6 @@
     "mongodb": "^6.8.0"
   },
   "scripts": {
-    "start": "node server.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "node server.js"
   }
 }

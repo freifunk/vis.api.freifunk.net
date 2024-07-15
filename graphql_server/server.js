@@ -1,24 +1,11 @@
 const express = require('express');
 const graphqlHTTP = require('express-graphql').graphqlHTTP;
-const { graphql, buildSchema } = require('graphql');
+const graphql = require('graphql');
 const { MongoClient } = require('mongodb');
 
 const context = () => MongoClient.connect('mongodb+srv://databaseReader:freifunkfreifunk@freifunktest.zsfzlav.mongodb.net/?retryWrites=true&w=majority&appName=freifunktest').then(client => client.db('communities'));
 
-// Construct a schema, using GraphQL schema language
-// this buildschema stuff can be replaced at some point
-// but for now
-const schema = buildSchema(`
-  type Query {
-    communities (metadata: String): [Community!]!
-  },
-  type Community {
-    metadata: String!,
-    timestamp: String,
-    _id: String,
-    content: String
- }
-`);
+const schema = require('./schema.js');
 
 // resolver for top five weimarnetz results
 const resolvers = {
