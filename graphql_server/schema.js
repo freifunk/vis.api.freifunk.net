@@ -1,12 +1,13 @@
 const { buildSchema } = require('graphql');
 
-module.exports = buildSchema(`
+const SDLschema = `
+
 type Query {
   communities(metadata: String): [Community!]!
 }
 
 type Community {
-  metadata: String!
+  metadata: String
   timestamp: String
   _id: String
   content: Content
@@ -20,5 +21,6 @@ type State {
   nodes: Int
 }
 
+`;
 
-`);
+module.exports = buildSchema(SDLschema)
