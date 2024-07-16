@@ -3,16 +3,21 @@ const graphqlHTTP = require('express-graphql').graphqlHTTP;
 const graphql = require('graphql');
 const { MongoClient } = require('mongodb');
 
-const context = () => MongoClient.connect('mongodb+srv://databaseReader:freifunkfreifunk@freifunktest.zsfzlav.mongodb.net/?retryWrites=true&w=majority&appName=freifunktest').then(client => client.db('communities'));
+const context = () => MongoClient.connect('mongodb+srv://databaseReader:freifunkfreifunk@freifunktest.zsfzlav.mongodb.net/').then(client => client.db('communities'));
 
 const schema = require('./schema.js');
 
-// resolver for top five weimarnetz results
 const resolvers = {
   communities: async (args, context) => {
     console.log(args);
     const db = await context();
     return db.collection('hourly_snapshot').find(args).limit(5).toArray();
+  },
+  latest_communities: async (args, context) => {
+    const db = await context();
+    // define query pipeline to pass on to MongoDB
+    let pipeline = [{ $sort: { timestamp: 1 } }, { $group: { _id: "$metadata", timestamp: { $first: "$timestamp" } } }];
+    return db.collection('hourly_snapshot').aggregate(pipeline).toArray();
   },
 };
 

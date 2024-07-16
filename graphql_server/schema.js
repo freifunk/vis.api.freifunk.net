@@ -4,12 +4,13 @@ const SDLschema = `
 
 type Query {
   communities(metadata: String): [Community!]!
+  latest_communities(metadata: String): [Community!]!
 }
 
 type Community {
   metadata: String
   timestamp: String
-  _id: String
+  _id: ID
   content: Content
 }
 
