@@ -11,14 +11,8 @@ type Community {
   metadata: String
   timestamp: String
   _id: ID
-  content: Content
-}
-
-type Content {
-  state: State
-}
-
-type State {
+  # This adds a nodes field for latest_communities
+  # there is a better way of doing this with interfaces
   nodes: Int
 }
 
