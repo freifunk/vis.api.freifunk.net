@@ -13,10 +13,10 @@ const resolvers = {
     const db = await context();
     return db.collection('hourly_snapshot').find(args).limit(5).toArray();
   },
-  latest_communities: async (args, context) => {
+  latest_nodes_per_community: async (args, context) => {
     const db = await context();
     // define query pipeline to pass on to MongoDB
-    let pipeline = [{ $sort: { timestamp: 1 } }, { $group: { _id: "$metadata", timestamp: { $first: "$timestamp" } } }];
+    let pipeline = [{ $sort: { timestamp: 1 } }, { $group: { _id: "$metadata", timestamp: { $first: "$timestamp" }, nodes: { $first: "$content.state.nodes" } } }];
     return db.collection('hourly_snapshot').aggregate(pipeline).toArray();
   },
 };
