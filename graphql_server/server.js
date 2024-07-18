@@ -28,7 +28,7 @@ app.use('/api',
   function (req, res, next) {
     res.header("Access-Control-Allow-Origin", "*");
     res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
-    res.header("Access-Control-Allow-Methods", "GET, POST");
+    res.header("Access-Control-Allow-Methods", "GET, POST, OPTIONS, HEAD");
     next();
   }, graphqlHTTP({
     schema,
@@ -39,6 +39,7 @@ app.use('/api',
   // return 204 code for favicon
   app.use('/favicon.ico', (req, res) => res.status(204));
 
-app.listen(4000);
-
-console.log(`Server ready at http://localhost:4000/api`);
+const port = 4000;
+app.listen(port, () => {
+  console.log(`Server listening on port ${port}`)
+});
