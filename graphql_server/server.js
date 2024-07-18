@@ -36,6 +36,8 @@ app.use('/api',
     context,
     graphiql: true
   }));
+  // return 204 code for favicon
+  app.use('/favicon.ico', (req, res) => res.status(204));
 
 app.listen(4000);
 
