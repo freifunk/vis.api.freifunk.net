@@ -24,12 +24,18 @@ const resolvers = {
 // This is the server bit
 const app = express();
 
-app.use('/api', graphqlHTTP({
-  schema,
-  rootValue: resolvers,
-  context,
-  graphiql: true
-}));
+app.use('/api',
+  function (req, res, next) {
+    res.header("Access-Control-Allow-Origin", "*");
+    res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+    res.header("Access-Control-Allow-Methods", "GET, POST");
+    next();
+  }, graphqlHTTP({
+    schema,
+    rootValue: resolvers,
+    context,
+    graphiql: true
+  }));
 
 app.listen(4000);
 
