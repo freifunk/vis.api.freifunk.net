@@ -19,12 +19,17 @@
         // fetch data from graphql endpoint
         async function getData() {
             const url = "http://localhost:4000/api";
+
             try {
-                const response = await fetch(url, {
+                const myHeaders = new Headers();
+                myHeaders.append("Content-Type", "application/json");
+                const myRequest = new Request(url, {
                     method: "POST",
-                    body: { "query": "{ latest_nodes_per_community { _id timestamp nodes } }" },
-                    // headers: { "Content-Type": "application/json" }
+                    body: JSON.stringify({ query: "{ latest_nodes_per_community { _id timestamp nodes } }" }),
+                    headers: myHeaders,
                 });
+                const response = await fetch(myRequest);
+
                 if (!response.ok) {
                     throw new Error(`Response status: ${response.status}`);
                 }

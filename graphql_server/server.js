@@ -36,8 +36,11 @@ app.use('/api',
     context,
     graphiql: true
   }));
-  // return 204 code for favicon
-  app.use('/favicon.ico', (req, res) => res.status(204));
+// return 204 code for favicon
+app.use('/favicon.ico', (req, res) => res.status(204));
+
+const path = require('path')
+app.use('/static', express.static(path.join(__dirname, '../visualisations')))
 
 const port = 4000;
 app.listen(port, () => {
