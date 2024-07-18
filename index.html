@@ -13,9 +13,8 @@
     <h2>Visualisation 1</h2>
 
     <div id="container"></div>
+    <script src="d3.js"></script>
     <script type="module">
-
-        import * as d3 from "https://cdn.jsdelivr.net/npm/d3@7/+esm";
 
         // fetch data from graphql endpoint
         async function getData() {
@@ -23,17 +22,17 @@
             try {
                 const response = await fetch(url, {
                     method: "POST",
-                    body: '{ "latest_nodes_per_community" { "_id" "timestamp" "nodes" } }'
-            });
-            if (!response.ok) {
-                throw new Error(`Response status: ${response.status}`);
+                    body: { "query": "{ latest_nodes_per_community { _id timestamp nodes } }" },
+                    // headers: { "Content-Type": "application/json" }
+                });
+                if (!response.ok) {
+                    throw new Error(`Response status: ${response.status}`);
+                }
+                const json = await response.json();
+                console.log(json);
+            } catch (error) {
+                console.error(error.message);
             }
-
-            const json = await response.json();
-            console.log(json);
-        } catch (error) {
-            console.error(error.message);
-        }
         }
         let gql_response_data = getData();
 
