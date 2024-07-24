@@ -19,6 +19,44 @@ const resolvers = {
     let pipeline = [{ $sort: { timestamp: 1 } }, { $group: { _id: "$metadata", timestamp: { $first: "$timestamp" }, nodes: { $first: "$content.state.nodes" } } }];
     return db.collection('hourly_snapshot').aggregate(pipeline).toArray();
   },
+  timeseries_nodes_per_community: async (args, context) => {
+    const db = await context();
+    // define query pipeline to pass on to MongoDB
+    let pipeline = [
+      {
+        $project: {
+          date: {
+            $dateToParts: {
+              date: "$timestamp"
+            }
+          },
+          "content.state.nodes": 1,
+          timestamp: 1
+        }
+      },
+      {
+        $sort: {
+          timestamp: 1
+        }
+      },
+      {
+        $group: {
+          _id: {
+            date: {
+              year: "$date.year",
+              month: "$date.month",
+              day: "$date.day",
+              hour: "$date.hour"
+            }
+          },
+          sumNodes: {
+            $sum: "$content.state.nodes"
+          }
+        }
+      }
+    ];
+    return db.collection('hourly_snapshot').aggregate(pipeline).toArray();
+  },
 };
 
 // This is the server bit
