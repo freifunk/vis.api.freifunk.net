@@ -16,7 +16,31 @@ const resolvers = {
   latest_nodes_per_community: async (args, context) => {
     const db = await context();
     // define query pipeline to pass on to MongoDB
-    let pipeline = [{ $sort: { timestamp: 1 } }, { $group: { _id: "$metadata", timestamp: { $first: "$timestamp" }, nodes: { $first: "$content.state.nodes" } } }];
+    let pipeline = [
+      {
+        $match: {
+          "content.state.nodes": {
+            $ne: null
+          }
+        }
+      },
+      {
+        $sort: {
+          timestamp: 1
+        }
+      },
+      {
+        $group: {
+          _id: "$metadata",
+          timestamp: {
+            $first: "$timestamp"
+          },
+          nodes: {
+            $first: "$content.state.nodes"
+          }
+        }
+      }
+    ];
     return db.collection('hourly_snapshot').aggregate(pipeline).toArray();
   },
   timeseries_nodes_per_community: async (args, context) => {
