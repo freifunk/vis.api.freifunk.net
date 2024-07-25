@@ -51,8 +51,8 @@
             }
         }
 
-        let gql_response_data = await getLocalData();
-        // let gql_response_data = await getRemoteData();
+        // let gql_response_data = await getLocalData();
+        let gql_response_data = await getRemoteData();
         console.log(gql_response_data);
 
         // Declare the chart dimensions and margins.
@@ -64,13 +64,14 @@
         const marginLeft = 40;
 
         // Declare the x (horizontal position) scale.
-        const x = d3.scaleUtc()
-            .domain([new Date("2023-01-01"), new Date("2024-01-01")])
-            .range([marginLeft, width - marginRight]);
+        const x = d3.scaleBand()
+            .domain(d3.groupSort(gql_response_data, ([d]) => -d._id, (d) => d.nodes)) // descending frequency
+            .range([marginLeft, width - marginRight])
+            .padding(0.1);
 
-        // Declare the y (vertical position) scale.
+        // // Declare the y (vertical position) scale.
         const y = d3.scaleLinear()
-            .domain([0, 100])
+            .domain([0, d3.max(gql_response_data, (d) => d.nodes)])
             .range([height - marginBottom, marginTop]);
 
         // Create the SVG container.
@@ -80,13 +81,31 @@
 
         // Add the x-axis.
         svg.append("g")
-            .attr("transform", `translate(0,${height - marginBottom})`)
-            .call(d3.axisBottom(x));
+            .selectAll()
+            .data(gql_response_data)
+            .join("rect")
+            .attr("x", (d) => x(d._id))
+            .attr("y", (d) => y(d.nodes))
+            .attr("height", (d) => y(0) - y(d.nodes))
+            .attr("width", x.bandwidth());
 
-        // Add the y-axis.
+
+        // Add the x-axis and label.
+        svg.append("g")
+            .attr("transform", `translate(0,${height - marginBottom})`)
+            .call(d3.axisBottom(x).tickSizeOuter(0));
+
+        // Add the y-axis and label, and remove the domain line.
         svg.append("g")
             .attr("transform", `translate(${marginLeft},0)`)
-            .call(d3.axisLeft(y));
+            .call(d3.axisLeft(y).tickFormat((y) => (y * 100).toFixed()))
+            .call(g => g.select(".domain").remove())
+            .call(g => g.append("text")
+                .attr("x", -marginLeft)
+                .attr("y", 10)
+                .attr("fill", "currentColor")
+                .attr("text-anchor", "start")
+                .text("Nodes"));
 
         // Append the SVG element.
         container.append(svg.node());
