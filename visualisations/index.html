@@ -65,7 +65,7 @@
 
         // Declare the x (horizontal position) scale.
         const x = d3.scaleBand()
-            .domain(d3.groupSort(gql_response_data, ([d]) => -d._id, (d) => d.nodes)) // descending frequency
+            .domain(d3.groupSort(gql_response_data, ([d]) => -d.nodes, (d) => d._id)) // descending frequency
             .range([marginLeft, width - marginRight])
             .padding(0.1);
 
@@ -89,17 +89,15 @@
             .attr("height", (d) => y(0) - y(d.nodes))
             .attr("width", x.bandwidth());
 
-
         // Add the x-axis and label.
         svg.append("g")
             .attr("transform", `translate(0,${height - marginBottom})`)
-            .call(d3.axisBottom(x).tickSizeOuter(0));
+            .call(d3.axisBottom(x))
 
-        // Add the y-axis and label, and remove the domain line.
+        // Add the y-axis and label.
         svg.append("g")
             .attr("transform", `translate(${marginLeft},0)`)
-            .call(d3.axisLeft(y).tickFormat((y) => (y * 100).toFixed()))
-            .call(g => g.select(".domain").remove())
+            .call(d3.axisLeft(y))
             .call(g => g.append("text")
                 .attr("x", -marginLeft)
                 .attr("y", 10)
