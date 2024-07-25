@@ -88,8 +88,9 @@ JSONs.tar.gz/
 *.csv
 json_adder/json_adder
 
-# d3.js library for local development
-d3.js
+# d3.js library and test response for local development
+visualisations/d3.js
+visualisations/test_response.json
 
 # don't need node package-lock
 package-lock.json
