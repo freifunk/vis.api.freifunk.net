@@ -17,7 +17,7 @@
     <script type="module">
 
         // fetch data from graphql endpoint
-        async function getData() {
+        async function getRemoteData() {
             const url = "http://localhost:4000/api";
 
             try {
@@ -39,7 +39,20 @@
                 console.error(error.message);
             }
         }
-        let gql_response_data = await getData();
+
+        async function getLocalData() {
+            try {
+                const response = await fetch("test_response.json");
+                const json = await response.json();
+                return json.data.latest_nodes_per_community;
+            }
+            catch (error) {
+                console.error(error.message);
+            }
+        }
+
+        let gql_response_data = await getLocalData();
+        // let gql_response_data = await getRemoteData();
         console.log(gql_response_data);
 
         // Declare the chart dimensions and margins.
