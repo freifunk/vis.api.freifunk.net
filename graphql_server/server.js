@@ -39,9 +39,14 @@ const resolvers = {
             $first: "$content.state.nodes"
           }
         }
+      },
+      {
+        $sort: {
+          nodes: -1
+        }
       }
     ];
-    return db.collection('hourly_snapshot').aggregate(pipeline).toArray();
+    return db.collection('hourly_snapshot').aggregate(pipeline).limit(10).toArray();
   },
   timeseries_nodes_per_community: async (args, context) => {
     const db = await context();
