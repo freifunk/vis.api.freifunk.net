@@ -5,7 +5,7 @@ const SDLschema = `
 type Query {
   communities(metadata: String): [Community!]!
   latest_nodes_per_community(metadata: String): [Community!]!
-  timeseries_nodes_per_community(metadata: String): [NodesTimeseries!]!
+  timeseries_nodes_per_community: [NodesTimeseries!]!
 }
 
 type Community {
