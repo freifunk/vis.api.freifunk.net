@@ -17,24 +17,24 @@
     <script type="module">
 
         // fetch data from graphql endpoint
-        async function getRemoteData() {
+        async function getRemoteData(query) {
             const url = "http://localhost:4000/api";
-
+            console.log(query);
             try {
                 const myHeaders = new Headers();
                 myHeaders.append("Content-Type", "application/json");
                 const myRequest = new Request(url, {
                     method: "POST",
-                    body: JSON.stringify({ query: "{ latest_nodes_per_community { _id timestamp nodes } }" }),
+                    body: query,
                     headers: myHeaders,
                 });
                 const response = await fetch(myRequest);
-
+                console.log(myRequest);
                 if (!response.ok) {
                     throw new Error(`Response status: ${response.status}`);
                 }
                 const json = await response.json();
-                return json.data.latest_nodes_per_community;
+                return json.data;
             } catch (error) {
                 console.error(error.message);
             }
@@ -51,8 +51,12 @@
             }
         }
 
+        const query_latest_nodes_per_community = JSON.stringify({ query: "{ latest_nodes_per_community { _id timestamp nodes } }" });
+        const query_nodes_timeseries = JSON.stringify({ query: "{ grouped_nodes_timeseries { _id { date { year month day hour } } sumNodes } }" });
+        console.log(query_nodes_timeseries);
+        console.log(query_latest_nodes_per_community);
         // let gql_response_data = await getLocalData();
-        let gql_response_data = await getRemoteData();
+        let gql_response_data = await getRemoteData(query_latest_nodes_per_community);
         console.log(gql_response_data);
 
         // Declare the chart dimensions and margins.

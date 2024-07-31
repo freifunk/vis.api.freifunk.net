@@ -48,7 +48,7 @@ const resolvers = {
     ];
     return db.collection('hourly_snapshot').aggregate(pipeline).limit(10).toArray();
   },
-  timeseries_nodes_per_community: async (args, context) => {
+  grouped_nodes_timeseries: async (args, context) => {
     const db = await context();
     // define query pipeline to pass on to MongoDB
     let pipeline = [
@@ -111,5 +111,6 @@ app.use('/static', express.static(path.join(__dirname, '../visualisations')));
 
 const port = 4000;
 app.listen(port, () => {
-  console.log(`Server listening on port ${port}`)
+  console.log(`GraphiQL running at http://localhost/${port}/api`),
+  console.log(`Test visualisation page running at http://localhost/${port}/static`)
 });
