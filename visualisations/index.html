@@ -11,7 +11,10 @@
 
     <h1>Graph page</h1>
     <h2>Graph 1</h2>
-    <div id="graph1_container"></div>
+    <figure id="graph1_container">
+        <figcaption>Top 10 communities with the most nodes<figcaption>
+    </figure>
+    
 
     <script src="d3.js"></script>
     <script type="module">
@@ -20,7 +23,7 @@
 
         import { createGraph1 } from './graphs/graph1.js';
         let graph1 = await createGraph1(query_latest_nodes_per_community);
-        graph1_container.append(graph1.node());
+        graph1_container.prepend(graph1.node());
 
     </script>
 
