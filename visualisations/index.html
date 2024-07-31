@@ -15,49 +15,15 @@
     <div id="container"></div>
     <script src="d3.js"></script>
     <script type="module">
-
-        // fetch data from graphql endpoint
-        async function getRemoteData(query) {
-            const url = "http://localhost:4000/api";
-            console.log(query);
-            try {
-                const myHeaders = new Headers();
-                myHeaders.append("Content-Type", "application/json");
-                const myRequest = new Request(url, {
-                    method: "POST",
-                    body: query,
-                    headers: myHeaders,
-                });
-                const response = await fetch(myRequest);
-                console.log(myRequest);
-                if (!response.ok) {
-                    throw new Error(`Response status: ${response.status}`);
-                }
-                const json = await response.json();
-                return json.data;
-            } catch (error) {
-                console.error(error.message);
-            }
-        }
-
-        async function getLocalData() {
-            try {
-                const response = await fetch("test_response.json");
-                const json = await response.json();
-                return json.data.latest_nodes_per_community;
-            }
-            catch (error) {
-                console.error(error.message);
-            }
-        }
+        import { getRemoteData, getLocalData } from './getData.js';
 
         const query_latest_nodes_per_community = JSON.stringify({ query: "{ latest_nodes_per_community { _id timestamp nodes } }" });
         const query_nodes_timeseries = JSON.stringify({ query: "{ grouped_nodes_timeseries { _id { date { year month day hour } } sumNodes } }" });
-        console.log(query_nodes_timeseries);
-        console.log(query_latest_nodes_per_community);
+
         // let gql_response_data = await getLocalData();
-        let gql_response_data = await getRemoteData(query_latest_nodes_per_community);
-        console.log(gql_response_data);
+        let gql_response_data = await getRemoteData(query_nodes_timeseries);
+        const grouped_nodes_timeseries = gql_response_data;
+        console.log(grouped_nodes_timeseries);
 
         // Declare the chart dimensions and margins.
         const width = 640;
