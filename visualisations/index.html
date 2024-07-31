@@ -14,13 +14,14 @@
     <figure id="graph1_container">
         <figcaption>Top 10 communities with the most nodes<figcaption>
     </figure>
-    
+
 
     <script src="d3.js"></script>
     <script type="module">
         const query_latest_nodes_per_community = JSON.stringify({ query: "{ latest_nodes_per_community { _id timestamp nodes } }" });
         const query_nodes_timeseries = JSON.stringify({ query: "{ grouped_nodes_timeseries { _id { date { year month day hour } } sumNodes } }" });
 
+        // Create graph 1
         import { createGraph1 } from './graphs/graph1.js';
         let graph1 = await createGraph1(query_latest_nodes_per_community);
         graph1_container.prepend(graph1.node());

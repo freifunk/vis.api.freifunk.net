@@ -1,7 +1,6 @@
 // fetch data from graphql endpoint
 async function getRemoteData(query) {
     const url = "http://localhost:4000/api";
-    console.log(query);
     try {
         const myHeaders = new Headers();
         myHeaders.append("Content-Type", "application/json");
@@ -11,7 +10,6 @@ async function getRemoteData(query) {
             headers: myHeaders,
         });
         const response = await fetch(myRequest);
-        console.log(myRequest);
         if (!response.ok) {
             throw new Error(`Response status: ${response.status}`);
         }
