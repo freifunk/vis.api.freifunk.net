@@ -111,6 +111,6 @@ app.use('/static', express.static(path.join(__dirname, '../visualisations')));
 
 const port = 4000;
 app.listen(port, () => {
-  console.log(`GraphiQL running at http://localhost/${port}/api`),
-  console.log(`Test visualisation page running at http://localhost/${port}/static`)
+  console.log(`GraphiQL running at http://localhost:${port}/api`),
+  console.log(`Test visualisation page running at http://localhost:${port}/static`)
 });
