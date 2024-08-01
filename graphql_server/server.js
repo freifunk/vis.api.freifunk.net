@@ -82,6 +82,13 @@ const resolvers = {
             $sum: "$content.state.nodes"
           }
         }
+      },
+      {
+        $match: {
+          sumNodes: {
+            $ne: 0
+          }
+        }
       }
     ];
     return db.collection('hourly_snapshot').aggregate(pipeline).toArray();
