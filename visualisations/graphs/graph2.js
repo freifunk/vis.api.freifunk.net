@@ -14,6 +14,13 @@ async function createGraph2(gql_query) {
         data_array.push(obj);
     };
 
+    function sortByDateAscending(a, b) {
+        return a.date - b.date;
+    }
+
+    data_array = data_array.sort(sortByDateAscending);
+
+    console.log(data_array);
     // Declare the chart dimensions and margins.
     const width = 640;
     const height = 400;
@@ -56,8 +63,8 @@ async function createGraph2(gql_query) {
         .attr("stroke-width", 1.5)
         .attr("d", line(data_array));
 
-    return svg;
+    return svg
 
-}
+};
 
 export { createGraph2 };
