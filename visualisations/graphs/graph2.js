@@ -4,6 +4,16 @@ async function createGraph2(gql_query) {
 
     let gql_response_data = await getRemoteData(gql_query);
 
+    let data_array = new Array();
+    for (const data_point of gql_response_data) {
+        let timestamp = new Date(Date.UTC(data_point._id.date.year, data_point._id.date.month, data_point._id.date.day, data_point._id.date.hour));
+        let obj = {
+            "date": timestamp,
+            "nodes": data_point.sumNodes
+        };
+        data_array.push(obj);
+    };
+
     // Declare the chart dimensions and margins.
     const width = 640;
     const height = 400;
@@ -12,16 +22,13 @@ async function createGraph2(gql_query) {
     const marginBottom = 30;
     const marginLeft = 40;
 
-    // Declare the x (horizontal position) scale.
-    const x = d3.scaleBand()
-        .domain(d3.groupSort(gql_response_data, ([d]) => -d.nodes, (d) => d._id)) // descending frequency
-        .range([marginLeft, width - marginRight])
-        .padding(0.1);
+    const x = d3.scaleUtc(d3.extent(data_array, d => d.date), [marginLeft, width - marginRight]);
+    const y = d3.scaleLinear([0, d3.max(data_array, d => d.nodes)], [height - marginBottom, marginTop]);
 
-    // // Declare the y (vertical position) scale.
-    const y = d3.scaleLinear()
-        .domain([0, d3.max(gql_response_data, (d) => d.nodes)])
-        .range([height - marginBottom, marginTop]);
+    // Declare the line generator.
+    const line = d3.line()
+        .x(d => x(d.date))
+        .y(d => y(d.nodes));
 
     // Create the SVG container.
     const svg = d3.create("svg")
@@ -30,29 +37,25 @@ async function createGraph2(gql_query) {
 
     // Add the x-axis.
     svg.append("g")
-        .selectAll()
-        .data(gql_response_data)
-        .join("rect")
-        .attr("x", (d) => x(d._id))
-        .attr("y", (d) => y(d.nodes))
-        .attr("height", (d) => y(0) - y(d.nodes))
-        .attr("width", x.bandwidth());
-
-    // Add the x-axis and label.
-    svg.append("g")
         .attr("transform", `translate(0,${height - marginBottom})`)
-        .call(d3.axisBottom(x))
+        .call(d3.axisBottom(x).ticks(width / 80).tickSizeOuter(0));
 
-    // Add the y-axis and label.
+    // Add the y-axis, remove the domain line, add grid lines and a label.
     svg.append("g")
         .attr("transform", `translate(${marginLeft},0)`)
-        .call(d3.axisLeft(y))
-        .call(g => g.append("text")
-            .attr("x", -marginLeft)
-            .attr("y", 10)
-            .attr("fill", "currentColor")
-            .attr("text-anchor", "start")
-            .text("Nodes"));
+        .call(d3.axisLeft(y).ticks(height / 40))
+        .call(g => g.select(".domain").remove())
+        .call(g => g.selectAll(".tick line").clone()
+            .attr("x2", width - marginLeft - marginRight)
+            .attr("stroke-opacity", 0.1));
+
+    // Append a path for the line.
+    svg.append("path")
+        .attr("fill", "none")
+        .attr("stroke", "black")
+        .attr("stroke-width", 1.5)
+        .attr("d", line(data_array));
+
     return svg;
 
 }

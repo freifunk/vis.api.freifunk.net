@@ -25,14 +25,14 @@
         const query_latest_nodes_per_community = JSON.stringify({ query: "{ latest_nodes_per_community { _id timestamp nodes } }" });
         const query_nodes_timeseries = JSON.stringify({ query: "{ grouped_nodes_timeseries { _id { date { year month day hour } } sumNodes } }" });
 
-        // Create graph 1
+        // // Create graph 1
         import { createGraph1 } from './graphs/graph1.js';
         let graph1 = await createGraph1(query_latest_nodes_per_community);
         graph1_container.prepend(graph1.node());
 
         // Create graph 2
         import { createGraph2 } from './graphs/graph2.js';
-        let graph2 = await createGraph1(query_nodes_timeseries);
+        let graph2 = await createGraph2(query_nodes_timeseries);
         graph2_container.prepend(graph2.node());
 
     </script>
