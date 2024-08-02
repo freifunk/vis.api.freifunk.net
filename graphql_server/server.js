@@ -15,82 +15,13 @@ const resolvers = {
   },
   latest_nodes_per_community: async (args, context) => {
     const db = await context();
-    // define query pipeline to pass on to MongoDB
-    let pipeline = [
-      {
-        $match: {
-          "content.state.nodes": {
-            $ne: null
-          }
-        }
-      },
-      {
-        $sort: {
-          timestamp: 1
-        }
-      },
-      {
-        $group: {
-          _id: "$metadata",
-          timestamp: {
-            $first: "$timestamp"
-          },
-          nodes: {
-            $first: "$content.state.nodes"
-          }
-        }
-      },
-      {
-        $sort: {
-          nodes: -1
-        }
-      }
-    ];
+    const pipeline = require('./mongodb_queries/latest_nodes_per_community.js');
     return db.collection('hourly_snapshot').aggregate(pipeline).limit(10).toArray();
   },
   grouped_nodes_timeseries: async (args, context) => {
     const db = await context();
     // define query pipeline to pass on to MongoDB
-    let pipeline = [
-      {
-        $project: {
-          date: {
-            $dateToParts: {
-              date: "$timestamp"
-            }
-          },
-          "content.state.nodes": 1,
-          timestamp: 1
-        }
-      },
-      {
-        $sort: {
-          timestamp: 1
-        }
-      },
-      {
-        $group: {
-          _id: {
-            date: {
-              year: "$date.year",
-              month: "$date.month",
-              day: "$date.day",
-              hour: "$date.hour"
-            }
-          },
-          sumNodes: {
-            $sum: "$content.state.nodes"
-          }
-        }
-      },
-      {
-        $match: {
-          sumNodes: {
-            $ne: 0
-          }
-        }
-      }
-    ];
+    const pipeline = require('./mongodb_queries/grouped_nodes_timeseries.js');
     return db.collection('hourly_snapshot').aggregate(pipeline).toArray();
   },
 };
