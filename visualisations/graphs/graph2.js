@@ -14,12 +14,6 @@ async function createGraph2(gql_query) {
         data_array.push(obj);
     };
 
-    function sortByDateAscending(a, b) {
-        return a.date - b.date;
-    }
-
-    data_array = data_array.sort(sortByDateAscending);
-
     console.log(data_array);
     // Declare the chart dimensions and margins.
     const width = 640;
