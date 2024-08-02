@@ -20,7 +20,6 @@ const resolvers = {
   },
   grouped_nodes_timeseries: async (args, context) => {
     const db = await context();
-    // define query pipeline to pass on to MongoDB
     const pipeline = require('./mongodb_queries/grouped_nodes_timeseries.js');
     return db.collection('hourly_snapshot').aggregate(pipeline).toArray();
   },

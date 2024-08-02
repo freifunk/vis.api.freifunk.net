@@ -18,19 +18,8 @@ type Community {
 }
 
 type NodesTimeseries {
-  _id: Date
+  _id: String
   sumNodes: Int
-}
-
-type Date {
-  date: DateParts
-}
-
-type DateParts {
-  year: Int
-  month: Int
-  day: Int
-  hour: Int
 }
 
 `;

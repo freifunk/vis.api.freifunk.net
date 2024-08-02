@@ -9,7 +9,7 @@ const query = [
     },
     {
         $sort: {
-            timestamp: 1
+            _id: 1
         }
     }
 ];
