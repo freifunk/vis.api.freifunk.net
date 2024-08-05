@@ -2,8 +2,8 @@ use chrono::{NaiveDateTime, Utc};
 use mongodb::{bson, Collection};
 use serde_json::Value;
 use std::fs;
-mod setup_db;
 mod models;
+mod setup_db;
 
 const DATA_DIRECTORY: &str = "../../api.freifunk.net/data/history/";
 
@@ -14,7 +14,9 @@ async fn main() -> mongodb::error::Result<()> {
 
     for file in fs::read_dir(DATA_DIRECTORY).unwrap() {
         // File path for sample json file, change this later
-        let file_path = file.unwrap().path();
+        let file_path: std::path::PathBuf = file.unwrap().path();
+
+        println!("{:?}", file_path.file_name().expect("filename not found"));
 
         // Convert JSON to string, then to value, then to bson
         let contents: String = fs::read_to_string(file_path).expect("couldn't read file");
@@ -50,14 +52,16 @@ async fn main() -> mongodb::error::Result<()> {
             communities_in_snapshot.push(community);
         }
 
+        // print!("{:?}",communities_in_snapshot);
+
         // Insert lots of documents in one go
-        let insert_many_result = snapshot_collection
-            .insert_many(communities_in_snapshot, None)
-            .await?;
-        println!("Inserted documents with _ids:");
-        for (_key, value) in &insert_many_result.inserted_ids {
-            println!("{}", value);
-        }
+        // let insert_many_result = snapshot_collection
+        //     .insert_many(communities_in_snapshot, None)
+        //     .await?;
+        // println!("Inserted documents with _ids:");
+        // for (_key, value) in &insert_many_result.inserted_ids {
+        //     println!("{}", value);
+        // }
     }
 
     Ok(())

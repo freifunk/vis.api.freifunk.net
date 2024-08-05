@@ -1,17 +1,21 @@
+use crate::models;
 use bson::doc;
 use mongodb::{
-    bson, options::{
+    bson,
+    options::{
         ClientOptions, CreateCollectionOptions, ServerApi, ServerApiVersion, TimeseriesGranularity,
         TimeseriesOptions,
-    }, Client, Collection
+    },
+    Client, Collection,
 };
-use crate::models;
 
 pub async fn get_collection() -> Collection<models::Community> {
-
     // boilerplate connection code
-    // changed this to a const, test it?
+    // local database
     const URI: &str = "mongodb://ADMIN:PASSWORD@localhost:27017";
+    // remote database
+    // const URL: &str = "mongodb+srv://pierremarshall:${password}@freifunktest.zsfzlav.mongodb.net/";
+
     let mut client_options = ClientOptions::parse_async(URI).await.unwrap();
 
     // Set the server_api field of the client_options object to Stable API version 1
@@ -24,7 +28,7 @@ pub async fn get_collection() -> Collection<models::Community> {
     let db_list: Vec<String> = client.list_database_names(doc! {}, None).await.unwrap();
     println!("List databases: {:?}", db_list);
     let db = client.database("communities");
-    
+
     // List collections in the database
     let coll_list: Vec<String> = db.list_collection_names(doc! {}).await.unwrap();
     println!("List collections in database: {:?}", coll_list);
@@ -42,11 +46,12 @@ pub async fn get_collection() -> Collection<models::Community> {
         let coll_opts = CreateCollectionOptions::builder()
             .timeseries(ts_opts)
             .build();
-        db.create_collection("hourly_snapshot", coll_opts).await.unwrap();
+        db.create_collection("hourly_snapshot", coll_opts)
+            .await
+            .unwrap();
     };
 
     // Return the collection
     let snapshot_collection: Collection<models::Community> = db.collection("hourly_snapshot");
-    return snapshot_collection
+    return snapshot_collection;
 }
-
