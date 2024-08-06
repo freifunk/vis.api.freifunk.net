@@ -15,7 +15,7 @@ async function createGraph2(gql_query) {
     const parseUnixTime = d3.utcParse("%s");
 
     const x = d3.scaleUtc(d3.extent(gql_response_data, d => parseUnixTime(d._id)), [marginLeft, width - marginRight]);
-    const y = d3.scaleLinear([0, d3.max(gql_response_data, d => d.sumNodes)], [height - marginBottom, marginTop]);
+    const y = d3.scaleLinear([d3.min(gql_response_data, d => d.sumNodes), d3.max(gql_response_data, d => d.sumNodes)], [height - marginBottom, marginTop]);
 
     // Declare the line generator.
     const line = d3.line()
