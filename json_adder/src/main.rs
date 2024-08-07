@@ -11,6 +11,8 @@ const DATA_DIRECTORY: &str = "../../api.freifunk.net/data/history/";
 
 async fn main() -> mongodb::error::Result<()> {
     let snapshot_collection: Collection<models::Community> = setup_db::get_collection().await;
+    let mut inserted_object_count: u64 = 0u64;
+    let mut inserted_file_count: u64 = 0u64;
 
     for file in fs::read_dir(DATA_DIRECTORY).unwrap() {
         // File path for sample json file, change this later
@@ -23,37 +25,24 @@ async fn main() -> mongodb::error::Result<()> {
         // Construct bson datetime function
         // -> bson::DateTime
         fn filepath_to_bson_date(file_path: std::path::PathBuf) -> bson::DateTime {
+            let file_name: &str = file_path
+                .file_name()
+                .expect("could not read filename after reading data directory")
+                .to_str()
+                .expect("could not convert filename to &str")
+                .get(..17)
+                .expect("could not truncate filename");
 
-            let file_name = file_path.file_name()
-            .expect("could not read filename after reading data directory")
-            .to_str().expect("could not convert filename to &str");
-
-            fn filename_to_padded_datestring(file_name: &str) -> String {
-
-                let mut truncated_filename = file_name
-                .get(..11)
-                .expect("could not truncate filename")
-                .to_string();
-    
-                // Add zeroes to the date string for minutes and seconds
-                truncated_filename.push_str("0000");
-                truncated_filename
-            }
-
-            let fmt: &str = "%Y%m%d-%H%M%S";
-            let padded_datestring = filename_to_padded_datestring(file_name);
-            let chrono_dt: chrono::DateTime<Utc> =
-                NaiveDateTime::parse_from_str(&padded_datestring, fmt)
-                    .expect("failed to parse naive datetime from json value")
-                    .and_utc();
+            let fmt: &str = "%Y%m%d-%H.%M.%S";
+            let chrono_dt: chrono::DateTime<Utc> = NaiveDateTime::parse_from_str(file_name, fmt)
+                .expect("failed to parse naive datetime from json value")
+                .and_utc();
             // Convert to bson datetime, copied
             // from https://docs.rs/bson/latest/bson/struct.DateTime.html
             let bson_dt: bson::DateTime = chrono_dt.into();
             bson::DateTime::from_chrono(chrono_dt);
             bson_dt
         }
-
-        
 
         let mut communities_in_snapshot: Vec<models::Community> = Vec::new();
         let bson_time = filepath_to_bson_date(file_path);
@@ -69,17 +58,18 @@ async fn main() -> mongodb::error::Result<()> {
             communities_in_snapshot.push(community);
         }
 
-        // print!("{:?}",communities_in_snapshot);
-
         // Insert lots of documents in one go
         let insert_many_result = snapshot_collection
             .insert_many(communities_in_snapshot, None)
             .await?;
-        println!("Inserted documents with _ids:");
-        for (_key, value) in &insert_many_result.inserted_ids {
-            println!("{}", value);
-        }
+
+        // Increment counters at the end of the loop
+        let insert_ids_count: u64 = insert_many_result.inserted_ids.len().try_into().unwrap();
+        inserted_object_count += insert_ids_count;
+        inserted_file_count += 1;
     }
+    // print!("{inserted_object_count} objects added");
+    println!("inserted {inserted_object_count} objects from {inserted_file_count} files");
 
     Ok(())
 }
