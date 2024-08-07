@@ -21,3 +21,9 @@ features = ["tokio-runtime"]
 [[example]]
 name = "json_to_struct"
 path = "examples/json_to_struct.rs"
+
+[profile.release]
+lto = "fat"
+
+[build]
+rustflags = ["-C", "target-cpu=native"]
