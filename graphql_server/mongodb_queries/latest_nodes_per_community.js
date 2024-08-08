@@ -1,17 +1,5 @@
 const query = [
     {
-        $match: {
-            "content.state.nodes": {
-                $ne: null
-            }
-        }
-    },
-    {
-        $sort: {
-            timestamp: 1
-        }
-    },
-    {
         $group: {
             _id: "$metadata",
             timestamp: {
@@ -24,8 +12,12 @@ const query = [
     },
     {
         $sort: {
+            timestamp: 1,
             nodes: -1
         }
+    },
+    {
+        $limit: 10
     }
 ]
 

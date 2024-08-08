@@ -16,7 +16,7 @@ const resolvers = {
   latest_nodes_per_community: async (args, context) => {
     const db = await context();
     const pipeline = require('./mongodb_queries/latest_nodes_per_community.js');
-    return db.collection('hourly_snapshot').aggregate(pipeline).limit(10).toArray();
+    return db.collection('hourly_snapshot').aggregate(pipeline).toArray();
   },
   grouped_nodes_timeseries: async (args, context) => {
     const db = await context();
