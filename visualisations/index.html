@@ -22,20 +22,29 @@
 
     <script src="d3.js"></script>
     <script type="module">
-        console.profile();
+
         const query_latest_nodes_per_community = JSON.stringify({ query: "{ latest_nodes_per_community { _id timestamp nodes } }" });
         const query_nodes_timeseries = JSON.stringify({ query: "{ grouped_nodes_timeseries { _id sumNodes } }" });
 
         // // Create graph 1
         import { createGraph1 } from './graphs/graph1.js';
-        let graph1 = await createGraph1(query_latest_nodes_per_community);
-        graph1_container.prepend(graph1.node());
+        createGraph1(query_latest_nodes_per_community).then(
+            (graph1) => {
+                graph1_container.prepend(graph1.node());
+                console.log("graph1 appended to DOM");
+            }
+        );
 
         // Create graph 2
         import { createGraph2 } from './graphs/graph2.js';
-        let graph2 = await createGraph2(query_nodes_timeseries);
-        graph2_container.prepend(graph2.node());
-        console.profileEnd();
+        createGraph2(query_nodes_timeseries).then(
+            (graph2) => {
+                graph2_container.prepend(graph2.node());
+                console.log("graph2 appended to DOM");
+            }
+        );
+        
+
     </script>
 
 </body>
