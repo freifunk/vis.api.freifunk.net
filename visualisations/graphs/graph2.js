@@ -6,7 +6,7 @@ async function createGraph2(gql_query) {
 
     // Declare the chart dimensions and margins.
     const width = 640;
-    const height = 400;
+    const height = 360;
     const marginTop = 20;
     const marginRight = 20;
     const marginBottom = 30;

@@ -11,11 +11,13 @@
 
     <h1>Graph page</h1>
     <h2>Graph 1</h2>
-    <figure id="graph1_container">
+    <figure>
+        <svg id="graph1_container" width="640" height="480"></svg>
         <figcaption>Top 10 communities with the most nodes<figcaption>
     </figure>
     <h2>Graph 2</h2>
-    <figure id="graph2_container">
+    <figure>
+        <svg id="graph2_container" width="640" height="480"></svg>
         <figcaption>Nodes over time<figcaption>
     </figure>
 
@@ -30,7 +32,7 @@
         import { createGraph1 } from './graphs/graph1.js';
         createGraph1(query_latest_nodes_per_community).then(
             (graph1) => {
-                graph1_container.prepend(graph1.node());
+                graph1_container.replaceWith(graph1.node());
                 console.log("graph1 appended to DOM");
             }
         );
@@ -39,11 +41,11 @@
         import { createGraph2 } from './graphs/graph2.js';
         createGraph2(query_nodes_timeseries).then(
             (graph2) => {
-                graph2_container.prepend(graph2.node());
+                graph2_container.replaceWith(graph2.node());
                 console.log("graph2 appended to DOM");
             }
         );
-        
+
 
     </script>
 

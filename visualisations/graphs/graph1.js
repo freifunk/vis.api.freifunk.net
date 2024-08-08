@@ -6,7 +6,7 @@ async function createGraph1(gql_query) {
 
     // Declare the chart dimensions and margins.
     const width = 640;
-    const height = 400;
+    const height = 360;
     const marginTop = 20;
     const marginRight = 20;
     const marginBottom = 30;
@@ -27,6 +27,8 @@ async function createGraph1(gql_query) {
     const svg = d3.create("svg")
         .attr("width", width)
         .attr("height", height);
+
+
 
     // Add the x-axis.
     svg.append("g")
@@ -50,9 +52,10 @@ async function createGraph1(gql_query) {
         .call(g => g.append("text")
             .attr("x", -marginLeft)
             .attr("y", 10)
-            .attr("fill", "currentColor")
+            .attr("fill", "black")
             .attr("text-anchor", "start")
             .text("Nodes"));
+
     return svg;
 
 }
