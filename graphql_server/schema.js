@@ -18,8 +18,8 @@ type Community {
 }
 
 type NodesTimeseries {
-  _id: String
-  sumNodes: Int
+  date: String
+  avgNodes: Int
 }
 
 `;

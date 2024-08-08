@@ -4,6 +4,8 @@ async function createGraph2(gql_query) {
 
     let gql_response_data = await getRemoteData(gql_query);
 
+    console.log(gql_response_data);
+
     // Declare the chart dimensions and margins.
     const width = 640;
     const height = 360;
@@ -12,15 +14,15 @@ async function createGraph2(gql_query) {
     const marginBottom = 30;
     const marginLeft = 40;
 
-    const parseUnixTime = d3.utcParse("%s");
+    const parseUnixTime = d3.utcParse("%Y-%m-%d");
 
-    const x = d3.scaleUtc(d3.extent(gql_response_data, d => parseUnixTime(d._id)), [marginLeft, width - marginRight]);
-    const y = d3.scaleLinear([d3.min(gql_response_data, d => d.sumNodes), d3.max(gql_response_data, d => d.sumNodes)], [height - marginBottom, marginTop]);
+    const x = d3.scaleUtc(d3.extent(gql_response_data, d => parseUnixTime(d.date)), [marginLeft, width - marginRight]);
+    const y = d3.scaleLinear([d3.min(gql_response_data, d => d.avgNodes), d3.max(gql_response_data, d => d.avgNodes)], [height - marginBottom, marginTop]);
 
     // Declare the line generator.
     const line = d3.line()
-        .x(d => x(parseUnixTime(d._id)))
-        .y(d => y(d.sumNodes));
+        .x(d => x(parseUnixTime(d.date)))
+        .y(d => y(d.avgNodes));
 
     // Create the SVG container.
     const svg = d3.create("svg")

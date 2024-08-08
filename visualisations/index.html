@@ -26,7 +26,7 @@
     <script type="module">
 
         const query_latest_nodes_per_community = JSON.stringify({ query: "{ latest_nodes_per_community { _id timestamp nodes } }" });
-        const query_nodes_timeseries = JSON.stringify({ query: "{ grouped_nodes_timeseries { _id sumNodes } }" });
+        const query_nodes_timeseries = JSON.stringify({ query: "{ grouped_nodes_timeseries { date avgNodes } }" });
 
         // // Create graph 1
         import { createGraph1 } from './graphs/graph1.js';
