@@ -4,8 +4,6 @@ async function createGraph2(gql_query) {
 
     let gql_response_data = await getRemoteData(gql_query);
 
-    console.log(gql_response_data);
-
     // Declare the chart dimensions and margins.
     const width = 640;
     const height = 360;
