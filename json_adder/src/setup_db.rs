@@ -14,7 +14,7 @@ pub async fn get_collection() -> Collection<models::Community> {
     // local database
     const URI: &str = "mongodb://ADMIN:PASSWORD@localhost:27017";
     // remote database
-    // const URL: &str = "mongodb+srv://pierremarshall:${password}@freifunktest.zsfzlav.mongodb.net/";
+    // const URI: &str = "mongodb+srv://${user}:${password}@freifunktest.zsfzlav.mongodb.net/";
 
     let mut client_options = ClientOptions::parse_async(URI).await.unwrap();
 
