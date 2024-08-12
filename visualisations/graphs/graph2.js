@@ -44,7 +44,7 @@ async function createGraph2(gql_query) {
     // Append a path for the line.
     svg.append("path")
         .attr("fill", "none")
-        .attr("stroke", "black")
+        .attr("stroke", "currentColor")
         .attr("stroke-width", 1.5)
         .attr("d", line(gql_response_data));
 

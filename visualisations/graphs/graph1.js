@@ -52,7 +52,7 @@ async function createGraph1(gql_query) {
         .call(g => g.append("text")
             .attr("x", -marginLeft)
             .attr("y", 10)
-            .attr("fill", "black")
+            .attr("fill", "currentColor")
             .attr("text-anchor", "start")
             .text("Nodes"));
 
