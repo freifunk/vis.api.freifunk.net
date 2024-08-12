@@ -1,4 +1,14 @@
 const query = [
+    // is there any appreciable performance gain
+    // to projecting the fields before grouping?
+    {
+        $project: {
+            _id: 0,
+            timestamp: true,
+            metadata: true,
+            nodes: "$content.state.nodes"
+        }
+    },
     {
         $group: {
             _id: "$metadata",
@@ -6,7 +16,7 @@ const query = [
                 $first: "$timestamp"
             },
             nodes: {
-                $first: "$content.state.nodes"
+                $first: "$nodes"
             }
         }
     },
@@ -19,6 +29,6 @@ const query = [
     {
         $limit: 10
     }
-]
+];
 
 module.exports = query;
