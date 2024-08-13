@@ -2,14 +2,17 @@ const query = [
     {
         $project: {
             _id: 0,
-            timestamp: true,
+            timestamp: {
+                $dateToParts: {
+                    date: "$timestamp"
+                }
+            },
             routing: "$content.techDetails.routing"
         }
     },
     {
         $unwind: {
-            path: "$routing",
-            preserveNullAndEmptyArrays: false
+            path: "$routing"
         }
     },
     {
@@ -18,27 +21,8 @@ const query = [
                 timestamp: "$timestamp",
                 routing: "$routing"
             },
-            sum: {
+            seen: {
                 $sum: 1
-            }
-        }
-    },
-    {
-        $project: {
-            _id: 0,
-            date: {
-                $dateToParts: {
-                    date: "$_id.timestamp"
-                }
-            },
-            routing: "$_id.routing",
-            sum: "$sum"
-        }
-    },
-    {
-        $match: {
-            routing: {
-                $ne: ""
             }
         }
     },
@@ -46,14 +30,14 @@ const query = [
         $group: {
             _id: {
                 date: {
-                    year: "$date.year",
-                    month: "$date.month",
-                    day: "$date.day"
+                    year: "$_id.timestamp.year",
+                    month: "$_id.timestamp.month",
+                    day: "$_id.timestamp.day"
                 },
-                routing: "$routing"
+                routing: "$_id.routing"
             },
-            avg: {
-                $avg: "$sum"
+            seen: {
+                $avg: "$seen"
             }
         }
     },
@@ -72,19 +56,16 @@ const query = [
                     }
                 }
             },
-            routing: {
-                routingTech: "$_id.routing",
-                seen: {
-                    $toInt: "$avg"
-                }
+            routingTech: "$_id.routing",
+            seen: {
+                $toInt: "$seen"
             }
         }
     },
     {
-        $group: {
-            _id: "$date",
-            routingList: {
-                $addToSet: "$routing"
+        $match: {
+            routingTech: {
+                $ne: ""
             }
         }
     },
