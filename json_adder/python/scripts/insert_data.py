@@ -13,11 +13,7 @@ def filepath_to_bson_date(file_path):
     bson_dt = DatetimeMS(chrono_dt)
     return bson_dt
 
-def process_json_file(file_path, collection):
-    with open(file_path, 'r') as file:
-        contents = file.read()
-        value = json.loads(contents)
-
+def process_community_data(value, file_path, collection):
     communities_in_snapshot = []
     bson_time = filepath_to_bson_date(file_path)
 
@@ -27,10 +23,20 @@ def process_json_file(file_path, collection):
             timestamp=bson_time,
             content=community_info
         )
-        communities_in_snapshot.append(community.to_bson())
+        if collection.count_documents({"metadata": community_label, "timestamp": bson_time}, limit=1) == 0:
+            communities_in_snapshot.append(community.to_bson())
 
-    insert_many_result = collection.insert_many(communities_in_snapshot)
-    return len(insert_many_result.inserted_ids)
+    print(f"working on file {file_path}, add {len(communities_in_snapshot)} communities")
+    if len(communities_in_snapshot) > 0: 
+        insert_many_result = collection.insert_many(communities_in_snapshot)
+        return len(insert_many_result.inserted_ids)
+    return 0
+
+def process_json_file(file_path, collection):
+    with open(file_path, 'r') as file:
+        contents = file.read()
+        value = json.loads(contents)
+    return process_community_data(value, file_path, collection)
 
 def process_tar_gz_file(file_path, collection):
     with tarfile.open(file_path, "r:gz") as tar:
@@ -40,20 +46,7 @@ def process_tar_gz_file(file_path, collection):
                 if f:
                     contents = f.read().decode('utf-8')
                     value = json.loads(contents)
-                    
-                    communities_in_snapshot = []
-                    bson_time = filepath_to_bson_date(file_path)
-
-                    for community_label, community_info in value.items():
-                        community = Community(
-                            metadata=community_label,
-                            timestamp=bson_time,
-                            content=community_info
-                        )
-                        communities_in_snapshot.append(community.to_bson())
-
-                    insert_many_result = collection.insert_many(communities_in_snapshot)
-                    return len(insert_many_result.inserted_ids)
+                    return process_community_data(value, file_path, collection)
     return 0
 
 def insert_data():
