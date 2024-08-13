@@ -24,16 +24,10 @@ type NodesTimeseries {
 }
 
 type RoutingTimeseries {
-  _id: String!
-  routingList: [Routers]
+  date: String!
+  routingTech: String!
+  seen: Int!
 }
-
-# This is needed for mapping
-type Routers {
-    routingTech: String
-    seen: Int
-}
-
 
 `;
 

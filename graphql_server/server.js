@@ -3,8 +3,8 @@ const graphqlHTTP = require('express-graphql').graphqlHTTP;
 const graphql = require('graphql');
 const { MongoClient } = require('mongodb');
 
-// const context = () => MongoClient.connect('mongodb://ADMIN:PASSWORD@localhost:27017').then(client => client.db('communities'));
-const context = () => MongoClient.connect('mongodb+srv://databaseReader:freifunkfreifunk@freifunktest.zsfzlav.mongodb.net/').then(client => client.db('communities'));
+const context = () => MongoClient.connect('mongodb://ADMIN:PASSWORD@localhost:27017').then(client => client.db('communities'));
+// const context = () => MongoClient.connect('mongodb+srv://databaseReader:freifunkfreifunk@freifunktest.zsfzlav.mongodb.net/').then(client => client.db('communities'));
 
 const schema = require('./schema.js');
 
@@ -37,8 +37,8 @@ const app = express();
 app.use('/api',
   function (req, res, next) {
     res.header("Access-Control-Allow-Origin", "*");
-    res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
-    res.header("Access-Control-Allow-Methods", "GET, POST, OPTIONS, HEAD");
+    // res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+    // res.header("Access-Control-Allow-Methods", "GET, POST, OPTIONS, HEAD");
     next();
   }, graphqlHTTP({
     schema,

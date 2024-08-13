@@ -20,13 +20,19 @@
         <svg id="graph2_container" width="640" height="480"></svg>
         <figcaption>Nodes over time</figcaption>
     </figure>
-
+    <h2>Graph 3</h2>
+    <figure>
+        <svg id="graph3_container" width="640" height="480"></svg>
+        <figcaption>Routing protocols in use over time</figcaption>
+    </figure>
 
     <script src="d3.js"></script>
     <script type="module">
 
         const query_latest_nodes_per_community = JSON.stringify({ query: "{ latest_nodes_per_community { _id timestamp nodes } }" });
         const query_nodes_timeseries = JSON.stringify({ query: "{ grouped_nodes_timeseries { date avgNodes } }" });
+        const query_routing_protocols = JSON.stringify({ query: "{ routing_protocols { date routingTech seen } }" });
+
 
         // // Create graph 1
         import { createGraph1 } from './graphs/graph1.js';
@@ -43,6 +49,15 @@
             (graph2) => {
                 graph2_container.replaceWith(graph2.node());
                 console.log("graph2 appended to DOM");
+            }
+        );
+
+        // Create graph 3
+        import { createGraph3 } from './graphs/graph3.js';
+        createGraph3(query_routing_protocols).then(
+            (graph3) => {
+                graph3_container.replaceWith(graph3.node());
+                console.log("graph3 appended to DOM");
             }
         );
 
