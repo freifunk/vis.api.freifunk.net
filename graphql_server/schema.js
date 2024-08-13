@@ -6,6 +6,7 @@ type Query {
   communities(metadata: String): [Community!]!
   latest_nodes_per_community(metadata: String): [Community!]!
   grouped_nodes_timeseries: [NodesTimeseries!]!
+  routing_protocols: [RoutingTimeseries]
 }
 
 type Community {
@@ -18,9 +19,21 @@ type Community {
 }
 
 type NodesTimeseries {
-  date: String
+  date: String!
   avgNodes: Int
 }
+
+type RoutingTimeseries {
+  _id: String!
+  routingList: [Routers]
+}
+
+# This is needed for mapping
+type Routers {
+    routingTech: String
+    seen: Int
+}
+
 
 `;
 

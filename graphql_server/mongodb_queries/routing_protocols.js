@@ -73,8 +73,8 @@ const query = [
                 }
             },
             routing: {
-                k: "$_id.routing",
-                v: {
+                routingTech: "$_id.routing",
+                seen: {
                     $toInt: "$avg"
                 }
             }
@@ -85,14 +85,6 @@ const query = [
             _id: "$date",
             routingList: {
                 $addToSet: "$routing"
-            }
-        }
-    },
-    {
-        $replaceWith: {
-            date: "$_id",
-            routers: {
-                $arrayToObject: "$routingList"
             }
         }
     },
