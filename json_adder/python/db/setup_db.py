@@ -1,17 +1,21 @@
+import logging
 from pymongo import MongoClient
 from pymongo.errors import CollectionInvalid
 from pymongo.collection import Collection
 
-def get_collection() -> Collection:
-    URI = "mongodb://localhost:27017"
-    client = MongoClient(URI)
-    db = client["communities"]
+def get_collection(config) -> Collection:
+    logging.info("Setting up database connection...")
+    
+    connection_string = config['database']['connection_string']
+    db_name = config['database']['database_name']
+    client = MongoClient(connection_string)
+    db = client[db_name]
 
     collection_name = "hourly_snapshot"
     if collection_name in db.list_collection_names():
-        print(f"{collection_name} exists, move on")
+        logging.info(f"Using existing collection: {collection_name}")
     else:
-        print(f"{collection_name} collection not found, creating it")
+        logging.info(f"Creating timeseries collection: {collection_name}")
 
         ts_opts = {
             "timeField": "timestamp",
@@ -22,7 +26,7 @@ def get_collection() -> Collection:
         try:
             db.create_collection(collection_name, timeseries=ts_opts)
         except CollectionInvalid as e:
-            print(f"Failed to create collection: {str(e)}")
+            logging.info(f"Failed to create collection: {str(e)}")
 
     snapshot_collection = db[collection_name]
     return snapshot_collection

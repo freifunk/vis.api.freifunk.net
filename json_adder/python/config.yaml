@@ -1,0 +1,9 @@
+database:
+  connection_string: "mongodb://localhost:27017"
+  database_name: "communities"
+
+paths:
+  data_directory: "../../api/history/"
+
+logging:
+  level: "INFO"
