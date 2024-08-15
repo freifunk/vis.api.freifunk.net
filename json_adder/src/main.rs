@@ -1,7 +1,10 @@
 use chrono::{NaiveDateTime, Utc};
+use flate2::read::GzDecoder;
 use mongodb::{bson, Collection};
 use serde_json::Value;
 use std::fs;
+use std::io::Read;
+use tar::Archive;
 mod models;
 mod setup_db;
 
@@ -15,15 +18,40 @@ async fn main() -> mongodb::error::Result<()> {
     let mut inserted_file_count: u64 = 0u64;
 
     for file in fs::read_dir(DATA_DIRECTORY).unwrap() {
-        // File path for sample json file, change this later
         let file_path: std::path::PathBuf = file.unwrap().path();
 
+        println!("reading file {:?}", file_path);
+
+        fn read_file_to_string(file_path: std::path::PathBuf) -> std::string::String {
+            if file_path.extension().unwrap() == "gz" {
+                let tar_gz = fs::File::open(file_path).expect("could not open file");
+                let tar = GzDecoder::new(tar_gz);
+                let mut archive = Archive::new(tar);
+                // get the first file in the archive
+                let file = archive.entries().unwrap().next();
+                let mut file: tar::Entry<GzDecoder<fs::File>> = file
+                    .unwrap()
+                    .expect("could not read first file in the archive");
+                let mut file_string = String::new();
+                file.read_to_string(&mut file_string).unwrap();
+                return file_string;
+            } else {
+                let file_string: String =
+                    fs::read_to_string(file_path).expect("couldn't read file");
+                return file_string;
+            };
+        }
+
         // Convert JSON to string, then to value, then to bson
-        let contents: String = fs::read_to_string(file_path.clone()).expect("couldn't read file");
+        let contents: String = read_file_to_string(file_path.clone());
+        // some files are empty, and if so, skip them
+        if contents.is_empty() {
+            continue;
+        }
+
         let value: Value = serde_json::from_str(&contents).expect("couldn't parse json");
 
         // Construct bson datetime function
-        // -> bson::DateTime
         fn filepath_to_bson_date(file_path: std::path::PathBuf) -> bson::DateTime {
             let file_name: &str = file_path
                 .file_name()
@@ -68,7 +96,7 @@ async fn main() -> mongodb::error::Result<()> {
         inserted_object_count += insert_ids_count;
         inserted_file_count += 1;
     }
-    // print!("{inserted_object_count} objects added");
+
     println!("inserted {inserted_object_count} objects from {inserted_file_count} files");
 
     Ok(())
