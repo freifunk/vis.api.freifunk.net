@@ -34,7 +34,7 @@
         const query_routing_protocols = JSON.stringify({ query: "{ routing_protocols { date routingTech seen } }" });
 
 
-        // // Create graph 1
+        // Create graph 1
         import { createGraph1 } from './graphs/graph1.js';
         createGraph1(query_latest_nodes_per_community).then(
             (graph1) => {

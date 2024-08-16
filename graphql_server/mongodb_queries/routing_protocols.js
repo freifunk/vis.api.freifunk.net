@@ -1,5 +1,13 @@
 const query = [
     {
+        $match: {
+            "content.techDetails.routing": {
+                $exists: true,
+                $ne: ""
+            }
+        }
+    },
+    {
         $project: {
             _id: 0,
             timestamp: {
@@ -31,8 +39,7 @@ const query = [
             _id: {
                 date: {
                     year: "$_id.timestamp.year",
-                    month: "$_id.timestamp.month",
-                    day: "$_id.timestamp.day"
+                    month: "$_id.timestamp.month"
                 },
                 routing: "$_id.routing"
             },
@@ -46,12 +53,11 @@ const query = [
             _id: 0,
             date: {
                 $dateToString: {
-                    format: "%Y-%m-%d",
+                    format: "%Y-%m",
                     date: {
                         $dateFromParts: {
                             year: "$_id.date.year",
-                            month: "$_id.date.month",
-                            day: "$_id.date.day"
+                            month: "$_id.date.month"
                         }
                     }
                 }

@@ -1,8 +1,13 @@
 import { getRemoteData, getLocalData } from '../getData.js';
 
 async function createGraph3(gql_query) {
+    console.log("fetching data");
 
-    let gql_response_data = await getRemoteData(gql_query);
+    let data = await getRemoteData(gql_query);
+
+    console.log("fetched data");
+
+    console.log(data);
 
     // Declare the chart dimensions and margins.
     const width = 640;
@@ -12,17 +17,26 @@ async function createGraph3(gql_query) {
     const marginBottom = 30;
     const marginLeft = 40;
 
-    const parseUnixTime = d3.utcParse("%Y-%m-%d");
+    const parseUnixTime = d3.utcParse("%Y-%m");
 
     const series = d3.stack()
         .order(d3.stackOrderDescending)
-        .keys(d3.union(gql_response_data.map(d => d.routingTech))) // distinct series keys, in input order
-        .value(([, group], key) => group.get(key).seen) // get value for each series key and stack
-        (d3.index(gql_response_data, d => parseUnixTime(d.date), d => d.routingTech)); // group by stack then series key
+        .keys(d3.union(data.map(d => d.routingTech)))
+        .value(([, group], key) => {
+            if (group.get(key)) {
+                return group.get(key).seen;
+            }
+            console.log(group);
+            console.log(key);
+            return 0;
+        })
+        (d3.index(data, d => parseUnixTime(d.date), d => d.routingTech));
+
+    console.log(series);
 
     // Prepare the scales for positional and color encodings.
     const x = d3.scaleUtc()
-        .domain(d3.extent(gql_response_data, d => parseUnixTime(d.date)))
+        .domain(d3.extent(data, d => parseUnixTime(d.date)))
         .range([marginLeft, width - marginRight]);
 
     const y = d3.scaleLinear()
