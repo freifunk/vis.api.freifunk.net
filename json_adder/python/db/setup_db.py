@@ -10,18 +10,30 @@ def get_collection(config) -> Collection:
     db_name = config['database']['database_name']
     client = MongoClient(connection_string)
     db = client[db_name]
+    granularity = config['import']['granularity']
 
-    collection_name = "hourly_snapshot"
+    collection_name = f"{granularity}_snapshot"
     if collection_name in db.list_collection_names():
         logging.info(f"Using existing collection: {collection_name}")
     else:
         logging.info(f"Creating timeseries collection: {collection_name}")
+        ts_opts = {}
+        if granularity == "hourly": 
+            ts_opts = {
+                "timeField": "timestamp",
+                "metaField": "metadata",
+                "granularity": "hourly"
+            }
+        elif granularity == "daily":
+            ts_opts = {
+                "timeField": "timestamp",
+                "metaField": "metadata",
+                "bucketRoundingSeconds": 86400,
+                "bucketMaxSpanSeconds": 86400
+            }
+        else:
+            raise Exception(f"Granularity {granularity} not allowed!")
 
-        ts_opts = {
-            "timeField": "timestamp",
-            "metaField": "metadata",
-            "granularity": "hours"
-        }
 
         try:
             db.create_collection(collection_name, timeseries=ts_opts)

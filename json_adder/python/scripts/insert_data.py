@@ -1,11 +1,13 @@
 import os
 import json
 import logging
+import re
 import tarfile
 from models.community import Community
 from db.setup_db import get_collection
 from datetime import datetime
 from bson.datetime_ms import DatetimeMS
+from multiprocessing import Pool, cpu_count
 
 def filepath_to_bson_date(file_path):
     logging.debug(f"Extracting date from filename: {file_path}")
@@ -69,11 +71,23 @@ def process_tar_gz_file(file_path, collection):
 def insert_data(config):
     data_directory = config['paths']['data_directory']
     snapshot_collection = get_collection(config)
+    granularity = config['import']['granularity']
 
     inserted_object_count = 0
     inserted_file_count = 0
+    pool = Pool(cpu_count())
 
-    for file_name in os.listdir(data_directory):
+    file_list = os.listdir(data_directory)
+    
+    if granularity == "daily":
+        files = sorted([file for file in file_list if re.match("\d{8}-00\.\d{2}\.\d{2}-ffSummarizedDir.json.*", file)])
+    elif granularity == "hourly":
+        files = sorted(file_list)
+    else:
+        raise Exception(f"Granularity {granularity} not valid")
+
+    logging.info(f"We're going to process {len(files)} files.")
+    for file_name in files:
         file_path = os.path.join(data_directory, file_name)
         logging.debug(f"Start reading file {file_name}")
 
@@ -90,6 +104,7 @@ def insert_data(config):
 
         inserted_object_count += inserted_count
         inserted_file_count += 1
+        logging.info(f"Processed {inserted_file_count} files")
 
     logging.info(f"Inserted {inserted_object_count} objects from {inserted_file_count} files")
 

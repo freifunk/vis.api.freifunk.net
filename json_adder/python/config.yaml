@@ -7,3 +7,6 @@ paths:
 
 logging:
   level: "INFO"
+
+import:
+  granularity: "daily" # possible: daily, hourly
