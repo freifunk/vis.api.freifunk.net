@@ -22,8 +22,7 @@ const query = [
             _id: {
                 date: {
                     year: "$date.year",
-                    month: "$date.month",
-                    day: "$date.day"
+                    month: "$date.month"
                 }
             },
             avgNodes: {
@@ -41,12 +40,11 @@ const query = [
             _id: 0,
             date: {
                 $dateToString: {
-                    format: "%Y-%m-%d",
+                    format: "%Y-%m",
                     date: {
                         $dateFromParts: {
                             year: "$_id.date.year",
-                            month: "$_id.date.month",
-                            day: "$_id.date.day"
+                            month: "$_id.date.month"
                         }
                     }
                 }
