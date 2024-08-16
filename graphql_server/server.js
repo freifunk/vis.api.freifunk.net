@@ -17,17 +17,17 @@ const resolvers = {
   latest_nodes_per_community: async (args, context) => {
     const db = await context();
     const pipeline = require('./mongodb_queries/latest_nodes_per_community.js');
-    return db.collection('hourly_snapshot').aggregate(pipeline).toArray();
+    return db.collection('daily_snapshot').aggregate(pipeline).toArray();
   },
   grouped_nodes_timeseries: async (args, context) => {
     const db = await context();
     const pipeline = require('./mongodb_queries/grouped_nodes_timeseries.js');
-    return db.collection('hourly_snapshot').aggregate(pipeline).toArray();
+    return db.collection('daily_snapshot').aggregate(pipeline).toArray();
   },
   routing_protocols: async (args, context) => {
     const db = await context();
     const pipeline = require('./mongodb_queries/routing_protocols.js');
-    return db.collection('hourly_snapshot').aggregate(pipeline).toArray();
+    return db.collection('daily_snapshot').aggregate(pipeline).toArray();
   }
 };
 
