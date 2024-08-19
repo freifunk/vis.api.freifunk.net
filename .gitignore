@@ -5,6 +5,7 @@ json_adder/Cargo.lock
 
 # MongoDB container
 data/db/
+db/
 
 # Python
 **/venv/
