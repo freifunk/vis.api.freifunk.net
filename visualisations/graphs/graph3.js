@@ -26,13 +26,9 @@ async function createGraph3(gql_query) {
             if (group.get(key)) {
                 return group.get(key).seen;
             }
-            console.log(group);
-            console.log(key);
             return 0;
         })
         (d3.index(data, d => parseUnixTime(d.date), d => d.routingTech));
-
-    console.log(series);
 
     // Prepare the scales for positional and color encodings.
     const x = d3.scaleUtc()
@@ -45,7 +41,7 @@ async function createGraph3(gql_query) {
 
     const color = d3.scaleOrdinal()
         .domain(series.map(d => d.key))
-        .range(d3.schemeTableau10);
+        .range(d3.schemeSet3)
 
     // Construct an area shape.
     const area = d3.area()
