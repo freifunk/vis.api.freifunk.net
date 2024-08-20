@@ -62,16 +62,54 @@ const query = [
                     }
                 }
             },
-            routingTech: "$_id.routing",
+            routingTech: {
+                $cond: {
+                    if: {
+                        $in: [
+                            "$_id.routing",
+                            [
+                                "B.A.T.M.A.N. advanced",
+                                "B.A.T.M.A.N advanced",
+                                "BATMAN",
+                                "B.A.T.M.A.N.-adv"
+                            ]
+                        ]
+                    },
+                    then: "batman-adv",
+                    else: "$_id.routing"
+                }
+            },
             seen: {
                 $toInt: "$seen"
             }
         }
     },
     {
+        $group: {
+            _id: {
+                routingTech: "$routingTech",
+                date: "$date"
+            },
+            seen: {
+                $sum: "$seen"
+            }
+        }
+    },
+    {
+        $project: {
+            date: "$_id.date",
+            routingTech: "$_id.routingTech",
+            seen: true,
+            _id: 0
+        }
+    },
+    {
         $match: {
             routingTech: {
                 $ne: ""
+            },
+            seen: {
+                $gt: 1
             }
         }
     },
