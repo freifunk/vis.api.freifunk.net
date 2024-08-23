@@ -3,7 +3,7 @@ const graphqlHTTP = require('express-graphql').graphqlHTTP;
 const graphql = require('graphql');
 const { MongoClient } = require('mongodb');
 
-const context = () => MongoClient.connect('mongodb://ADMIN:PASSWORD@localhost:27017').then(client => client.db('communities'));
+const context = () => MongoClient.connect('mongodb://localhost:27017').then(client => client.db('communities'));
 // const context = () => MongoClient.connect('mongodb+srv://databaseReader:freifunkfreifunk@freifunktest.zsfzlav.mongodb.net/').then(client => client.db('communities'));
 
 const schema = require('./schema.js');
