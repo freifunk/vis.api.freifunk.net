@@ -5,8 +5,8 @@ const SDLschema = `
 type Query {
   communities(metadata: String): [Community!]!
   latest_nodes_per_community(metadata: String): [Community!]!
-  grouped_nodes_timeseries: [NodesTimeseries!]!
-  routing_protocols: [RoutingTimeseries]
+  grouped_nodes_timeseries(start: String, end: String): [NodesTimeseries!]!
+  routing_protocols(start: String, end: String): [RoutingTimeseries]
 }
 
 type Community {
