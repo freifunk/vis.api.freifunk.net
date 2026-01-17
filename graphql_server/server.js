@@ -3,8 +3,8 @@ const graphqlHTTP = require('express-graphql').graphqlHTTP;
 const graphql = require('graphql');
 const { MongoClient } = require('mongodb');
 
+// Connection URL
 const context = () => MongoClient.connect('mongodb://localhost:27017').then(client => client.db('communities'));
-// const context = () => MongoClient.connect('mongodb+srv://databaseReader:freifunkfreifunk@freifunktest.zsfzlav.mongodb.net/').then(client => client.db('communities'));
 
 const schema = require('./schema.js');
 
@@ -14,18 +14,27 @@ const resolvers = {
     const db = await context();
     return db.collection('hourly_snapshot').find(args).limit(5).toArray();
   },
+
   latest_nodes_per_community: async (args, context) => {
     const db = await context();
+    // This file exports an ARRAY, so we use it directly
     const pipeline = require('./mongodb_queries/latest_nodes_per_community.js');
     return db.collection('daily_snapshot').aggregate(pipeline).toArray();
   },
+
+  // OP: This is the section we updated to support date filtering
   grouped_nodes_timeseries: async (args, context) => {
     const db = await context();
-    const pipeline = require('./mongodb_queries/grouped_nodes_timeseries.js');
+    // This file now exports a FUNCTION, so we must call it with '(args)'
+    // The variable 'pipeline' here is scoped only to this function block
+    const pipeline = require('./mongodb_queries/grouped_nodes_timeseries.js')(args);
     return db.collection('daily_snapshot').aggregate(pipeline).toArray();
   },
+
   routing_protocols: async (args, context) => {
     const db = await context();
+    // This file exports an ARRAY, so we use it directly
+    // The variable 'pipeline' here is scoped only to this function block
     const pipeline = require('./mongodb_queries/routing_protocols.js');
     return db.collection('daily_snapshot').aggregate(pipeline).toArray();
   }
@@ -46,6 +55,7 @@ app.use('/api',
     context,
     graphiql: true
   }));
+
 // return 204 code for favicon
 app.use('/favicon.ico', (req, res) => res.status(204));
 
